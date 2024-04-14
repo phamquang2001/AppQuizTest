@@ -1,0 +1,178 @@
+import React, { useEffect, useState } from "react";
+import { Checkbox, Radio, Select } from "antd";
+import "./style.scss";
+import { DownOutlined } from "@ant-design/icons";
+const { Option } = Select;
+
+interface CustomOption {
+  value: string;
+  label: React.ReactNode;
+  desc?: string;
+  status?: boolean;
+}
+
+const SelectTest: React.FC = () => {
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [check, setCheck] = useState(false);
+  const [language, setLanguage] = useState("");
+  const handleChange = (value: any) => {
+    console.log(value)
+    if (selectedValues.includes(value.value)) {
+      const updatedValues = selectedValues.filter((item) => item !== value.value);
+      setSelectedValues(updatedValues);
+    } else {
+      setSelectedValues([...selectedValues, value.value]);
+    }
+    if (value.value === "Personalitytest") {
+      setCheck(!check);
+    }
+  };
+  const options: CustomOption[] = [
+    {
+      label: "Verbal test",
+      value: "Verbaltest",
+      status: false,
+    },
+    {
+      label: "Numerical test",
+      value: "Numericaltest",
+      status: false,
+    },
+    {
+      label: "Logical test",
+      value: "Logicaltest",
+      status: false,
+    },
+    {
+      label: "Visual test",
+      value: "Visualtest",
+      status: false,
+    },
+    {
+      label: "Memory test",
+      value: "Memorytest",
+      status: false,
+    },
+    {
+      label: "Personality test",
+      value: "Personalitytest",
+      status: false,
+    },
+  ];
+
+  const handleDropdownToggle = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
+
+  const handleSaveButtonClick = () => {
+    console.log("Save button clicked");
+    setDropdownVisible(false);
+  };
+  useEffect(() => {
+    if (language === "English") {
+      const updatedValues = selectedValues.map((item) =>
+        item === "Personalitytest" || item === "Personality test in Vietnamese"
+          ? "Personality test in English"
+          : item
+      );
+      setSelectedValues(updatedValues);
+    } else if (language === "Vietnamese") {
+      const updatedValues = selectedValues.map((item) =>
+        item === "Personalitytest" || item === "Personality test in English"
+          ? "Personality test in Vietnamese"
+          : item
+      );
+      setSelectedValues(updatedValues);
+    }
+  }, [language]);
+  useEffect(() => {
+    if (!check) {
+      setSelectedValues(
+        selectedValues.filter(
+          (value) =>
+            value !== "Personality test in Vietnamese" 
+        )
+      );
+    }
+  }, [check]);
+  console.log(selectedValues);
+  return (
+    <div style={{ position: "relative" }}>
+      <div
+        className="select-test min-h-8"
+        style={{ cursor: "pointer" }}
+        onClick={handleDropdownToggle}
+      >
+        {selectedValues.join(", ")}
+        <DownOutlined className="absolute right-3 flex items-center top-2 opacity-40 text-xs" />
+      </div>
+      {dropdownVisible && (
+        <div
+          className="option-select-test"
+          style={{
+            position: "absolute",
+            zIndex: 999,
+            top: "100%",
+            width: "100%",
+            left: 0,
+            backgroundColor: "#fff",
+            border: "1px solid #ccc",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+          }}
+        >
+          <div style={{ fontWeight: 400, padding: "8px" }}>
+            Choose tests for your assessmentes
+          </div>
+          {options.map((option, index) => (
+            <div key={index} style={{ padding: "8px", width: "100%" }}>
+              <Checkbox
+                className="w-full"
+                value={option.value}
+                onChange={() => handleChange(option)}
+              >
+                {option.label}
+              </Checkbox>
+            </div>
+          ))}
+          {check && (
+            <>
+              <Radio.Group
+                className="flex flex-col ml-8 gap-3"
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
+                  if (
+                    selectedValue === "English" ||
+                    selectedValue === "Vietnamese"
+                  ) {
+                    setLanguage(selectedValue);
+                  } else {
+                    setLanguage("");
+                  }
+                }}
+                name="personalityTest"
+              >
+                <Radio value={"English"}>Personality test in English</Radio>
+                <Radio value={"Vietnamese"}>
+                  Personality test in Vietnamese
+                </Radio>
+              </Radio.Group>
+              <span className="flex flex-col ml-8  w-2/3 opacity-70">
+                PyTalent offers two languague versions of personality test. You
+                can choose which one is most suitable for your candidates.
+              </span>
+            </>
+          )}
+          <button
+            className="py-3 px-8 bg-sky-500 text-white border rounded-lg"
+            onClick={handleSaveButtonClick}
+          >
+            Save
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SelectTest;

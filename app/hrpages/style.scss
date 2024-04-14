@@ -1,0 +1,24 @@
+.Header-HR {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .btn-test {
+    border-radius: 8px;
+    padding: 10px;
+    gap: 10px;
+    background-color: #ccebf2;
+    color: #009dbe;
+    height: 44px;
+    width: 180px;
+  }
+
+  .btn-login {
+    border-radius: 8px;
+    padding: 10px;
+    gap: 10px;
+    background-color: #009dbe;
+    color: #ffffff;
+    height: 44px;
+    width: 180px;
+  }
+}

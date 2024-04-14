@@ -1,0 +1,16 @@
+.my-assess,
+.test-lib {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 500;
+  &:focus {
+    color: #009dbe;
+    border-bottom: 2px solid #009dbe; /* Đổi từ text-decoration sang border-bottom */
+    padding-bottom: 2px;
+  }
+}
+.active {
+  color: #009dbe;
+  border-bottom: 2px solid #009dbe; /* Đổi từ text-decoration sang border-bottom */
+  padding-bottom: 2px;
+}
