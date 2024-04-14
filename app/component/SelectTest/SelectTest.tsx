@@ -10,17 +10,20 @@ interface CustomOption {
   desc?: string;
   status?: boolean;
 }
-
 const SelectTest: React.FC = () => {
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [check, setCheck] = useState(false);
   const [language, setLanguage] = useState("");
   const handleChange = (value: any) => {
-    console.log(value)
+    console.log(value);
     if (selectedValues.includes(value.value)) {
-      const updatedValues = selectedValues.filter((item) => item !== value.value);
+      const updatedValues = selectedValues.filter(
+        (item) => item !== value.value
+      );
       setSelectedValues(updatedValues);
+    } else if (check && value.value == "Personalitytest") {
+      setSelectedValues([...selectedValues]);
     } else {
       setSelectedValues([...selectedValues, value.value]);
     }
@@ -70,14 +73,15 @@ const SelectTest: React.FC = () => {
     setDropdownVisible(false);
   };
   useEffect(() => {
-    if (language === "English") {
+    console.log(language);
+    if (check && language === "English") {
       const updatedValues = selectedValues.map((item) =>
         item === "Personalitytest" || item === "Personality test in Vietnamese"
           ? "Personality test in English"
           : item
       );
       setSelectedValues(updatedValues);
-    } else if (language === "Vietnamese") {
+    } else if (check && language === "Vietnamese") {
       const updatedValues = selectedValues.map((item) =>
         item === "Personalitytest" || item === "Personality test in English"
           ? "Personality test in Vietnamese"
@@ -85,26 +89,26 @@ const SelectTest: React.FC = () => {
       );
       setSelectedValues(updatedValues);
     }
-  }, [language]);
-  useEffect(() => {
     if (!check) {
+      setLanguage("");
+      console.log("check");
       setSelectedValues(
         selectedValues.filter(
           (value) =>
-            value !== "Personality test in Vietnamese" 
+            value !== "Personality test in Vietnamese" &&
+            value !== "Personality test in English"
         )
       );
     }
-  }, [check]);
-  console.log(selectedValues);
+  }, [language, check]);
   return (
     <div style={{ position: "relative" }}>
       <div
-        className="select-test min-h-8"
+        className="select-test min-h-8 "
         style={{ cursor: "pointer" }}
         onClick={handleDropdownToggle}
       >
-        {selectedValues.join(", ")}
+        <div className="w-11/12">{selectedValues.join(", ")}</div>
         <DownOutlined className="absolute right-3 flex items-center top-2 opacity-40 text-xs" />
       </div>
       {dropdownVisible && (
@@ -121,15 +125,24 @@ const SelectTest: React.FC = () => {
             boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
           }}
         >
-          <div style={{ fontWeight: 400, padding: "8px" }}>
+          <div style={{ fontWeight: 400, margin: "8px" }}>
             Choose tests for your assessmentes
           </div>
           {options.map((option, index) => (
-            <div key={index} style={{ padding: "8px", width: "100%" }}>
+            <div key={index}>
               <Checkbox
-                className="w-full"
+                style={{ padding: "8px", width: "100%" }}
+                className="w-full check-box-select"
                 value={option.value}
                 onChange={() => handleChange(option)}
+                checked={
+                  selectedValues.includes(option.value) ||
+                  ((selectedValues.includes("Personality test in English") ||
+                    selectedValues.includes(
+                      "Personality test in Vietnamese"
+                    )) &&
+                    index === options.length - 1)
+                }
               >
                 {option.label}
               </Checkbox>
@@ -138,6 +151,7 @@ const SelectTest: React.FC = () => {
           {check && (
             <>
               <Radio.Group
+                value={language}
                 className="flex flex-col ml-8 gap-3"
                 onChange={(e) => {
                   const selectedValue = e.target.value;
@@ -152,7 +166,9 @@ const SelectTest: React.FC = () => {
                 }}
                 name="personalityTest"
               >
-                <Radio value={"English"}>Personality test in English</Radio>
+                <Radio checked value={"English"}>
+                  Personality test in English
+                </Radio>
                 <Radio value={"Vietnamese"}>
                   Personality test in Vietnamese
                 </Radio>
