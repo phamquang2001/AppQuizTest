@@ -15,8 +15,8 @@ const SelectTest: React.FC = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [check, setCheck] = useState(false);
   const [language, setLanguage] = useState("");
+  const [radioChecked, setRadioChecked] = useState(true);
   const handleChange = (value: any) => {
-    console.log(value);
     if (selectedValues.includes(value.value)) {
       const updatedValues = selectedValues.filter(
         (item) => item !== value.value
@@ -69,11 +69,13 @@ const SelectTest: React.FC = () => {
   };
 
   const handleSaveButtonClick = () => {
-    console.log("Save button clicked");
-    setDropdownVisible(false);
+    if (check && language === "") {
+      setRadioChecked(false)
+    } else {
+      setDropdownVisible(false);
+    }
   };
   useEffect(() => {
-    console.log(language);
     if (check && language === "English") {
       const updatedValues = selectedValues.map((item) =>
         item === "Personalitytest" || item === "Personality test in Vietnamese"
@@ -160,19 +162,24 @@ const SelectTest: React.FC = () => {
                     selectedValue === "Vietnamese"
                   ) {
                     setLanguage(selectedValue);
+                    setRadioChecked(true); // Đặt biến state để chỉ ra rằng radio đã được chọn
                   } else {
                     setLanguage("");
+                    setRadioChecked(false); // Đặt biến state để chỉ ra rằng radio chưa được chọn
                   }
                 }}
                 name="personalityTest"
               >
-                <Radio checked value={"English"}>
-                  Personality test in English
-                </Radio>
+                <Radio value={"English"}>Personality test in English</Radio>
                 <Radio value={"Vietnamese"}>
                   Personality test in Vietnamese
                 </Radio>
               </Radio.Group>
+              {check && !radioChecked && (
+                <span className="text-red-500 flex flex-col ml-8  w-2/3 ">
+                  Please select a language.
+                </span>
+              )}
               <span className="flex flex-col ml-8  w-2/3 opacity-70">
                 PyTalent offers two languague versions of personality test. You
                 can choose which one is most suitable for your candidates.

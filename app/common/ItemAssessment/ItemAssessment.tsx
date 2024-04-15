@@ -4,8 +4,12 @@ import Text from "../Text/Text";
 import "./style.scss";
 import ButtonDetails from "../ButtonDetails/ButtonDetails";
 import Image from "next/image";
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import { Tooltip } from "antd";
+import {
+  DeleteOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
+import { Modal, Tooltip } from "antd";
 
 interface Props {
   archive?: boolean;
@@ -14,6 +18,19 @@ interface Props {
 function ItemAssessment(props: Props) {
   const { archive } = props;
   const [hideEye, setHideEye] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div
       className={
@@ -54,9 +71,39 @@ function ItemAssessment(props: Props) {
               <Image width={25} height={25} src="/archived.svg" alt=""></Image>
             </button>
           </Tooltip>
+          <Tooltip placement="top" title={"Delete assessment"}>
+            <button onClick={showModal} className="item-menu">
+              <DeleteOutlined style={{ fontSize: "25px" }} />
+            </button>
+          </Tooltip>
+          <Modal
+            title={<span style={{ fontSize: '24px' }}>Delete assessment</span>}
+            open={isModalOpen}
+            footer={null}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <p className="py-6 text-lg">
+              Are you sure you wish to delete this assessment and its content?
+            </p>
+            <div className="flex gap-4 justify-end">
+              <button onClick={handleCancel} className="bg-slate-300 rounded-lg py-2 px-4 text-lg">
+                Cancel
+              </button>
+              <button onClick={handleOk} className="bg-red-200 text-red-600 rounded-lg py-2 px-4 text-lg ">
+                Delete
+              </button>
+            </div>
+          </Modal>
         </div>
       ) : (
-        ""
+        <div className="menu-assessment active-menu-assessment flex flex-row gap-2 items-center">
+          <Tooltip placement="top" title={"Unarchive assessment"}>
+            <button className="item-menu">
+              <Image width={25} height={25} src="/archived.svg" alt=""></Image>
+            </button>
+          </Tooltip>
+        </div>
       )}
       <Text className="text-xl" text="Assessment name" weight={600}></Text>
       <div
