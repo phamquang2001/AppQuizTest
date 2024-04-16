@@ -6,10 +6,29 @@ import { Button, Modal } from "antd";
 import React, { useState } from "react";
 import FormCreateAssessment from "../FormCreateAssessment/FormCreateAssessment";
 
-interface Props {}
+interface Props {
+}
 function AssessContent(props: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const dataAssessment = [
+    {
+      id: 1,
+      content: {
+        name: "Assessment 1",
+        participants: 8,
+        date: 7,
+      },
+    },
+    {
+      id: 2,
+      content: {
+        name: "Assessment 2",
+        participants: 5,
+        date: 3,
+      },
+    },
+  ];
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -51,8 +70,9 @@ function AssessContent(props: Props) {
           </Modal>
         </div>
         <div className="flex flex-row gap-10">
-          <ItemAssessment></ItemAssessment>
-          <ItemAssessment></ItemAssessment>
+          {dataAssessment.map((item, index) => (
+            <ItemAssessment key={item.id} data={item} />
+          ))}
         </div>
       </div>
       <div className="flex flex-col mt-7 gap-5">

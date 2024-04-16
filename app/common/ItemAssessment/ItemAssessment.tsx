@@ -13,10 +13,18 @@ import { Modal, Tooltip } from "antd";
 
 interface Props {
   archive?: boolean;
+  data?: {
+    id?: number,
+      content: {
+        name: string
+        participants: number,
+        date: number,
+      },
+  }
 }
 
 function ItemAssessment(props: Props) {
-  const { archive } = props;
+  const { archive, data } = props;
   const [hideEye, setHideEye] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,6 +39,7 @@ function ItemAssessment(props: Props) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+  console.log(data)
   return (
     <div
       className={
@@ -121,7 +130,7 @@ function ItemAssessment(props: Props) {
           Last activity: <span className="font-semibold">6 days ago</span>
         </p>
       </div>
-      <ButtonDetails />
+      <ButtonDetails id={data?.id} />
     </div>
   );
 }

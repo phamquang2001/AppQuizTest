@@ -5,9 +5,13 @@ import Link from "antd/es/typography/Link";
 import IncludedTest from "@/app/component/IncludedTest/IncludedTest";
 import InviteParticipantsModal from "@/app/component/InviteParticipantsModal/InviteParticipantsModal";
 import HeaderHr from "@/app/component/HeaderHr/HeaderHr";
+import { useRouter } from "next/router";
 
 export default function InviteAssessment() {
   const [isOpenInvite, setIsOpenInvite] = useState(false);
+  // const router = useRouter();
+  // const { id } = router.query;
+
   const items: MenuProps["items"] = [
     {
       label: (

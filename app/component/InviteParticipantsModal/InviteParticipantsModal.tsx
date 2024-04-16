@@ -4,66 +4,54 @@ import { Button, Input, Modal } from "antd";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InputMultipleEmail from "../InputMultipleEmail/InputMultipleEmail";
+import UploadFileModal from "../UploadFileModal/UploadFileModal";
 // import UploadFIleModal from "./UploadFIleModal";
 
 export default function InviteParticipantsModal({ open, onClose }: any) {
-  const [value, setValue] = useState("");
-  const [renderEmails, setRenderEmails] = useState<string[]>([]);
-  const [isOpenUpload, setIsOpenUpload] = useState(false);
-  const handleEnterEmail = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key == "Enter") {
-      setRenderEmails((prevRenderEmails) => [value, ...prevRenderEmails]);
-      setValue("");
-    }
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
   };
 
-  const handleRemoveEmail = (emailToRemove: string) => {
-    setRenderEmails(renderEmails.filter((email) => email !== emailToRemove));
+  const handleOk = () => {
+    setIsModalOpen(false);
   };
 
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+  const copyLink = (inviteUrl: string) => {
+    navigator.clipboard
+      .writeText(inviteUrl)
+      .then(() => {
+        toast.success("Link copied successfully!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy link.");
+      });
+  };
   return (
     <>
-      {isOpenUpload ? (
-        <></>
+      {isModalOpen ? (
+        <UploadFileModal
+          isModalOpen={true}
+          handleOk={handleOk}
+          handleCancel={handleCancel}
+        ></UploadFileModal>
       ) : (
-        // <UploadFIleModal
-        //   onOpen={isOpenUpload}
-        //   onClose={() => setIsOpenUpload(false)}
-        // />
         <Modal
           title="Invite participants"
           open={open}
           onOk={onClose}
           onCancel={onClose}
-          style={{}}
           width="800px"
           footer={false}
           centered
         >
           <div className="flex justify-between gap-[10px] mt-[20px]">
-            <div className="w-full p-2 overflow-y-auto flex flex-wrap gap-[10px] max-h-[152px] border-[1px] scroll-y-auto border-solid border-[#DEDDDD] rounded-[8px]">
-              {/* {renderEmails.map((item: any) => (
-                <div
-                  key={""}
-                  className="rounded-[16px] flex gap-[5px] items-center px-[12px] py-[4px] bg-[#F4F4F4]"
-                >
-                  {item}
-                </div>
-              ))}
-              <input
-                placeholder="Enter email, seperated by comma"
-                value={value}
-                className="px-[10px] outline-none flex-1 block"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setValue(e.target.value)
-                }
-                onKeyDown={handleEnterEmail}
-                type="text"
-              /> */}
-              <InputMultipleEmail></InputMultipleEmail>
-            </div>
+            <InputMultipleEmail></InputMultipleEmail>
             <Button
-              className="h-[56px] w-full max-w-[140px] bg-sky-500"
+              className="m-1 h-full py-2 w-full max-w-[140px] bg-sky-500"
               type="primary"
             >
               Send invite
@@ -80,10 +68,20 @@ export default function InviteParticipantsModal({ open, onClose }: any) {
                 disabled
                 placeholder="Enter email, seperated by comma"
                 className="h-[56px] text-[#6F767E] text-[16px] font-[400] leading-[24px]"
-                value={window.location.href}
+                value={window.location.href.replace(
+                  "/hrpages/invite-assessment/",
+                  "/candidate/welcome/"
+                )}
                 suffix={
                   <button
-                    onClick={() => toast.success('Link copied successfully!')}
+                    onClick={() =>
+                      copyLink(
+                        window.location.href.replace(
+                          "/hrpages/invite-assessment/",
+                          "/candidate/welcome/"
+                        )
+                      )
+                    }
                     className="text-[#009DBE] flex items-center gap-[10px]"
                   >
                     <p className="text-[16px] font-[500] leading-[24px]">
@@ -104,12 +102,13 @@ export default function InviteParticipantsModal({ open, onClose }: any) {
             </p>
 
             <Button
-              onClick={() => setIsOpenUpload(true)}
+              onClick={showModal}
               type="default"
               className="flex items-center border-[#66C4D8] text-[#009DBE] text-[16px] leading-[24px] font-[500]"
             >
               Upload here
             </Button>
+
             <ToastContainer />
           </div>
         </Modal>

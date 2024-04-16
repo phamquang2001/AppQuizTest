@@ -1,31 +1,36 @@
 import React, { useState } from 'react';
-import { Select, Space } from 'antd';
-import type { SelectProps } from 'antd';
+import { Select } from 'antd';
 
+const { Option } = Select;
 
 const InputMultipleEmail: React.FC = () => {
-  const [selectedValues, setSelectedValues] = useState<string[]>(['a10', 'c12']);
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+
+  const isValidEmail = (email: string): boolean => {
+    // Kiểm tra định dạng email bằng regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleChange = (value: string[]) => {
-    console.log(`selected ${value}`);
-    console.log(value)
-    setSelectedValues(value);
+    // Lọc ra các giá trị không phải là địa chỉ email hợp lệ
+    const validEmails = value.filter(isValidEmail);
+    setSelectedValues(validEmails);
   };
 
   return (
-    <Space style={{ width: '100%' }} direction="vertical">
-      <Select
-            mode="multiple"
-            style={{ width: "100%", padding: "4px 0" }}
-            onChange={handleChange}
-            // tokenSeparators={[","]}
-            open={false}
-            suffixIcon={null}
-            value={selectedValues}
-            placeholder="Please enter email"
-            // onDeselect={handleDeselect}
-          />
-    </Space>
+    <Select
+      mode="tags"
+      style={{ width: '100%', padding: '4px 0' }}
+      onChange={handleChange}
+      tokenSeparators={[',']}
+      open={false}
+      suffixIcon={null}
+      value={selectedValues}
+      placeholder="Enter email, separated by comma"
+      className="w-full p-2  overflow-y-auto max-h-[152px] scroll-y-auto border-solid border-[#DEDDDD] rounded-[8px]"
+    >
+    </Select>
   );
 };
 

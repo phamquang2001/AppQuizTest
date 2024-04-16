@@ -41,3 +41,9 @@ body {
 .ant-cascader-menu {
   height: auto !important; 
 }
+.ant-modal-title {
+  font-weight: 600 !important;
+  font-size: 32px !important;
+  line-height: 44px !important;
+  color: #111315 !important;
+}
