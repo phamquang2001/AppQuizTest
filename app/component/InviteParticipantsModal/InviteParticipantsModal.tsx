@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InputMultipleEmail from "../InputMultipleEmail/InputMultipleEmail";
 import UploadFileModal from "../UploadFileModal/UploadFileModal";
-// import UploadFIleModal from "./UploadFIleModal";
 
 export default function InviteParticipantsModal({ open, onClose }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
