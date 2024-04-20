@@ -2,28 +2,39 @@ import React, { useMemo, useState } from "react";
 import { Button, DatePicker, Form, Input } from "antd";
 import SelectTest from "../SelectTest/SelectTest";
 import SelectRecruiting from "../RecruitingForm/SelectRecruiting";
+import { CreateAssessment } from "@/app/api/api";
+import { DataCreateAssessment } from "@/app/utils/type";
 const { RangePicker } = DatePicker;
 
 interface Props {
   handleCancel?: () => void;
 }
-
 const FormCreateAssessment: React.FC<Props> = (props) => {
-  const [arrow, setArrow] = useState("Show");
-
-  const mergedArrow = useMemo(() => {
-    if (arrow === "Hide") {
-      return false;
-    }
-
-    if (arrow === "Show") {
-      return true;
-    }
-
-    return {
-      pointAtCenter: true,
-    };
-  }, [arrow]);
+  const [name, setName] = useState("");
+  const [jobFunction, setJobFunction] = useState("");
+  const [gameId, setGameId] = useState<number[]>([]);
+  const [option, setOption] = useState<string[]>([]);
+  const [jobPosition, setJobPosition] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const params: DataCreateAssessment = {
+    name: name,
+    job_function: jobFunction,
+    game: [
+      {
+        game_id: gameId,
+        option: option,
+      },
+    ],
+    job_position: jobPosition,
+    start_date: startDate,
+    end_date: endDate,
+  };
+  const handleCreateAssessment = async () => {
+    const res = await CreateAssessment(params);
+    console.log(res);
+  };
+  console.log(params);
   return (
     <Form
       onFinish={props.handleCancel}
@@ -36,16 +47,22 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
         name="YourAssessmentName"
         rules={[{ required: true, message: "Please input!" }]}
       >
-        <Input style={{ width: "100%" }} />
+        <Input
+          onChange={(e) => setName(e.target.value)}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
       <Form.Item
         label="Select tests"
         name="SelectTests"
-        rules={[{ required: true, message: "Please input!" }]}
+        // rules={[{ required: true, message: "Please input!" }]}
       >
         <SelectTest></SelectTest>
       </Form.Item>
-        <SelectRecruiting></SelectRecruiting>
+      <SelectRecruiting
+        setJobFunction={(value: string) => {setJobFunction(value)}}
+        setJobPosition={(value: string) => {setJobPosition(value)}}
+      />
       <Form.Item
         label="Assessment date"
         name="AssessmentDate"
@@ -59,6 +76,7 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
           className="!w-full bg-sky-500 text-white text-base leading-6 font-medium py-5 flex items-center justify-center"
           type="default"
           htmlType="submit"
+          onClick={() => handleCreateAssessment()}
         >
           Create
         </Button>

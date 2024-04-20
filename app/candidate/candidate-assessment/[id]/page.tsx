@@ -31,13 +31,14 @@ function CandidateAssessment(props: Props) {
           </ul>
           <p>Have fun and good luck.</p>
         </div>
-        <div>
-          <h1 className="font-semibold text-4xl">Choose a test</h1>
+        <div className="flex flex-col gap-3">
+          <h1 className="font-semibold text-3xl">Choose a test</h1>
           <ItemTest
             image="/itemtest.svg"
             name="Verbal challenge"
             time={90}
             point={100}
+            status="Completed"
           ></ItemTest>
         </div>
       </div>

@@ -39,7 +39,6 @@ function ItemAssessment(props: Props) {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  console.log(data)
   return (
     <div
       className={

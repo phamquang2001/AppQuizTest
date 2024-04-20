@@ -1,14 +1,38 @@
-'use client'
+"use client";
+import { logOutHrPages } from "@/app/api/api";
 import Logo from "@/app/common/Logo/Logo";
-import { Image } from "antd";
+import { deleteCookie, getCookie } from "@/app/utils/cookie";
+import { Button, Dropdown, Menu } from "antd";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function HeaderHr(props: any) {
   const [activeButton, setActiveButton] = useState<string>("my-assess");
-
+  const router = useRouter();
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName);
   };
+  const handleLogout = async () => {
+    await logOutHrPages();
+    deleteCookie("access_token");
+    router.push("/");
+    
+  };
+
+  const handleResetPassword = () => {
+    // Xử lý đặt lại mật khẩu
+  };
+  const menu = (
+    <Menu>
+      <Menu.Item onClick={handleLogout} key="logout">
+        Logout
+      </Menu.Item>
+      <Menu.Item onClick={handleResetPassword} key="reset-password">
+        Reset Password
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <div className="Header-HR flex items-center justify-between sticky top-0 z-10 bg-white">
       <Logo></Logo>
@@ -32,13 +56,17 @@ function HeaderHr(props: any) {
       </div>
       <div className="avatar-hr flex mt-2 items-center gap-3 mr-5">
         <span className="text-sky-500 font-medium">Username</span>
-        <Image
-          className=""
-          src="/avatar.svg"
-          alt=""
-          width={60}
-          height={60}
-        ></Image>
+        <Dropdown overlay={menu} trigger={["click"]}>
+          <button>
+            <Image
+              className=""
+              src="/avatar.svg"
+              alt=""
+              width={60}
+              height={60}
+            ></Image>
+          </button>
+        </Dropdown>
       </div>
     </div>
   );

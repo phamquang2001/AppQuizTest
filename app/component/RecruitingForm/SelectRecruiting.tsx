@@ -6,7 +6,10 @@ interface Option {
   label: string;
   children?: Option[];
 }
-
+interface Props {
+  setJobFunction?: (value: string) => void;
+  setJobPosition?: (value: string) => void;
+}
 const options: Option[] = [
   {
     value: "developer",
@@ -138,7 +141,8 @@ const displayRender = (labels: string[]) => {
   );
 };
 
-const SelectRecruiting: React.FC = () => {
+const SelectRecruiting= (props: Props) => {
+  const { setJobFunction, setJobPosition } = props;
   const [otherCheck, setOtherCheck] = useState<boolean>(false);
 
   const onChange = (value: (string | number)[]) => {

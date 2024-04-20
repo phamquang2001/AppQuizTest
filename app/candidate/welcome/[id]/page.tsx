@@ -1,5 +1,6 @@
 import Header from "@/app/component/Header/Header";
 import { Button, Input } from "antd";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -9,7 +10,7 @@ function Welcome(props: Props) {
     <div>
       <Header />
       <div className="flex flex-col items-center justify-center ">
-        <img width={500} src="/logoShoppe.svg" alt="" />
+        <Image height={500} width={500} src="/logoShoppe.svg" alt="" />
         <div className="w-[500px] flex flex-col items-center gap-3">
           <h1 className="font-semibold text-2xl leading-[56px]">
             Welcome to Shopee assessment
