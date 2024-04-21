@@ -4,7 +4,7 @@ export interface LoginRequestBody {
 }
 export interface Game {
   game_id: number[];
-  option: string[];
+  option?: string[];
 }
 
 export interface DataCreateAssessment {

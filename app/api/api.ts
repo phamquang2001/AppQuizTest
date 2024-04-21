@@ -18,6 +18,6 @@ export const logInHrPages = async (params: LoginRequestBody) => {
 export const logOutHrPages = async () => {
   return await axiosInstance.post(`${urlBase}/api/v1/logout`);
 };
-export const CreateAssessment = async (params : DataCreateAssessment) => {
+export const CreateAssessment = async (params: any) => {
   return await axiosInstance.post(`${urlBase}/api/v1/create-assessment`, params);
 };

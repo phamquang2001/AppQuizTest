@@ -7,8 +7,8 @@ interface Option {
   children?: Option[];
 }
 interface Props {
-  setJobFunction?: (value: string) => void;
-  setJobPosition?: (value: string) => void;
+  setJobFunction: (value: string) => void;
+  setJobPosition: (value: string) => void;
 }
 const options: Option[] = [
   {
@@ -17,19 +17,23 @@ const options: Option[] = [
     children: [
       {
         value: "developerJunior",
-        label: "Junior",
+        label: "C-level executive",
       },
       {
         value: "developerSenior",
-        label: "Senior",
+        label: "Director",
       },
       {
         value: "developerLead",
-        label: "Lead",
+        label: "Manager",
       },
       {
         value: "developerManager",
-        label: "Manager",
+        label: "Junior / Trainee",
+      },
+      {
+        value: "developerManager",
+        label: "Intern",
       },
     ],
   },
@@ -39,19 +43,23 @@ const options: Option[] = [
     children: [
       {
         value: "quanlityControlJunior",
-        label: "Junior",
+        label: "C-level executive",
       },
       {
         value: "quanlityControlSenior",
-        label: "Senior",
+        label: "Director",
       },
       {
         value: "quanlityControlLead",
-        label: "Lead",
+        label: "Manager",
       },
       {
         value: "quanlityControlManager",
-        label: "Manager",
+        label: "Junior / Trainee",
+      },
+      {
+        value: "quanlityControlManager",
+        label: "Intern",
       },
     ],
   },
@@ -61,15 +69,15 @@ const options: Option[] = [
     children: [
       {
         value: "accountingJunior",
-        label: "Junior",
+        label: "C-level executive",
       },
       {
         value: "accountingSenior",
-        label: "Senior",
+        label: "Director",
       },
       {
         value: "accountingLead",
-        label: "Lead",
+        label: "Intern",
       },
       {
         value: "accountingManager",
@@ -83,15 +91,15 @@ const options: Option[] = [
     children: [
       {
         value: "productOwnerJunior",
-        label: "Junior",
+        label: "C-level executive",
       },
       {
         value: "productOwnerSenior",
-        label: "Senior",
+        label: "Director",
       },
       {
         value: "productOwnerLead",
-        label: "Lead",
+        label: "Intern",
       },
       {
         value: "productOwnerManager",
@@ -105,15 +113,15 @@ const options: Option[] = [
     children: [
       {
         value: "talentAcquisitionJunior",
-        label: "Junior",
+        label: "C-level executive",
       },
       {
         value: "talentAcquisitionSenior",
-        label: "Senior",
+        label: "Director",
       },
       {
         value: "talentAcquisitionLead",
-        label: "Lead",
+        label: "Intern",
       },
       {
         value: "talentAcquisitionManager",
@@ -126,22 +134,8 @@ const options: Option[] = [
     label: "Other",
   },
 ];
-const displayRender = (labels: string[]) => {
-  return (
-    <span>
-      {labels.map((item, index) => {
-        return (
-          <>
-            <span key={index}>{item}</span>
-            <span>{index === labels.length - 1 ? "" : " - "}</span>
-          </>
-        );
-      })}
-    </span>
-  );
-};
 
-const SelectRecruiting= (props: Props) => {
+const SelectRecruiting = (props: Props) => {
   const { setJobFunction, setJobPosition } = props;
   const [otherCheck, setOtherCheck] = useState<boolean>(false);
 
@@ -151,6 +145,23 @@ const SelectRecruiting= (props: Props) => {
     } else {
       setOtherCheck(false);
     }
+  };
+
+  const displayRender = (labels: string[]) => {
+    setJobFunction(labels[0]);
+    setJobPosition(labels[1])
+    return (
+      <span>
+        {labels.map((item, index) => {
+          return (
+            <>
+              <span key={index}>{item}</span>
+              <span>{index === labels.length - 1 ? "" : " - "}</span>
+            </>
+          );
+        })}
+      </span>
+    );
   };
   return (
     <>

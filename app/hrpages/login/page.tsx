@@ -21,6 +21,7 @@ function HRLogin(props: any) {
   const logInStatus = useStore((state) => state.logInStatus);
   const loggedIn = useStore((state) => state.loggedIn);
   const message = useStore((state) => state.message);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const access_token = getCookie("access_token");
   const handleChange = (value: string) => {
     setEmail(value);
@@ -29,15 +30,23 @@ function HRLogin(props: any) {
     setIsValidEmail(validateEmail(email));
     try {
       await logIn(email, password);
+      setIsLoading(true);
+      // Các công việc cần thực hiện khi nút được nhấn
+      setTimeout(() => {
+        setIsLoading(false); // Sau khi công việc hoàn thành, tắt trạng thái loading
+      }, 2000);
     } catch (error) {}
   };
   useEffect(() => {
-    debugger
     if (logInStatus === "rejected") {
-      toast.error(message);
+      setTimeout(() => {
+        toast.error(message);
+      }, 2000);
     } else if (access_token && logInStatus === "fulfilled") {
-      toast.success(message);
-      router.push("/hrpages/create-assessment");
+      setTimeout(() => {
+        toast.success(message);
+        router.push("/hrpages/create-assessment");
+      }, 2000);
     }
   }, [logInStatus]);
   const validateEmail = (email: string): boolean => {
@@ -76,7 +85,7 @@ function HRLogin(props: any) {
               className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 w-full"
             />
           </div>
-          {logInStatus === "pending" ? (
+          {isLoading ? (
             <div className="size-10 border border-gray-300 focus:outline-none focus:border-blue-500 w-full text-white bg-gray-300 flex justify-center	">
               <Spin style={{ fontSize: 24, color: "white" }} size="default" />
             </div>

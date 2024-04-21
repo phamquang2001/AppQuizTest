@@ -12,7 +12,7 @@ interface Props {
 const FormCreateAssessment: React.FC<Props> = (props) => {
   const [name, setName] = useState("");
   const [jobFunction, setJobFunction] = useState("");
-  const [gameId, setGameId] = useState<number[]>([]);
+  const [gameId, setGameId] = useState<number[]>([1, 2]);
   const [option, setOption] = useState<string[]>([]);
   const [jobPosition, setJobPosition] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -31,8 +31,23 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
     end_date: endDate,
   };
   const handleCreateAssessment = async () => {
-    const res = await CreateAssessment(params);
+    const formData = new FormData();
+    formData.append("name", params.name);
+    formData.append("job_function", params.job_function);
+    params.game.forEach((items: any, index: number) => {
+      formData.append(`game[${index}][game_id]`, items.game_id.toString());
+      formData.append(`game[${index}][option]`, items.option);
+    });
+    formData.append("job_position", params.job_position);
+    formData.append("start_date", params.start_date);
+    formData.append("end_date", params.end_date);
+    const res = await CreateAssessment(formData);
     console.log(res);
+  };
+  const onSelectDate = (date: any) => {
+    console.log(date);
+    setStartDate(date[0]);
+    setEndDate(date[1]);
   };
   console.log(params);
   return (
@@ -57,18 +72,33 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
         name="SelectTests"
         // rules={[{ required: true, message: "Please input!" }]}
       >
-        <SelectTest></SelectTest>
+        <SelectTest
+          setGameId={(value: number[]) => {
+            setGameId(value);
+          }}
+        ></SelectTest>
       </Form.Item>
       <SelectRecruiting
-        setJobFunction={(value: string) => {setJobFunction(value)}}
-        setJobPosition={(value: string) => {setJobPosition(value)}}
+        setJobFunction={(value: string) => {
+          setJobFunction(value);
+        }}
+        setJobPosition={(value: string) => {
+          setJobPosition(value);
+        }}
       />
       <Form.Item
         label="Assessment date"
         name="AssessmentDate"
         rules={[{ required: true, message: "Please input!" }]}
       >
-        <RangePicker style={{ width: "100%" }} />
+        <RangePicker
+          format="DD-MM-YYYY HH:mm:ss"
+          onChange={(dates, dateStrings) => {
+            console.log(dateStrings);
+            onSelectDate(dateStrings);
+          }}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
 
       <Form.Item wrapperCol={{ offset: 0, span: 50 }}>
