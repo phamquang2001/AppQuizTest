@@ -4,45 +4,46 @@ import SelectTest from "../SelectTest/SelectTest";
 import SelectRecruiting from "../RecruitingForm/SelectRecruiting";
 import { CreateAssessment } from "@/app/api/api";
 import { DataCreateAssessment } from "@/app/utils/type";
+import { toast } from "react-toastify";
+import useStore from "@/app/Zustand/AssessmentStore";
 const { RangePicker } = DatePicker;
 
 interface Props {
-  handleCancel?: () => void;
+  handleCancel: () => void;
 }
-const FormCreateAssessment: React.FC<Props> = (props) => {
+const FormCreateAssessment = (props: Props) => {
+  const { handleCancel } = props;
   const [name, setName] = useState("");
   const [jobFunction, setJobFunction] = useState("");
-  const [gameId, setGameId] = useState<number[]>([1, 2]);
+  const [gameId, setGameId] = useState<number[]>([]);
   const [option, setOption] = useState<string[]>([]);
   const [jobPosition, setJobPosition] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [form] = Form.useForm();
+  const getData = useStore((state) => state.listAssessment);
+  const getDataArchive = useStore((state) => state.listAssessmentArchive);
   const params: DataCreateAssessment = {
     name: name,
     job_function: jobFunction,
-    game: [
-      {
-        game_id: gameId,
-        option: option,
-      },
-    ],
+    // game: [
+    //   {
+    //     game_id: [1],
+    //     option: option,
+    //   },
+    //   {
+    //     game_id: [2],
+    //     option: option,
+    //   },
+    // ],
+    game: gameId.map((id) => ({
+      game_id: [id],
+      option: id === 6 ? option : [],
+    })),
     job_position: jobPosition,
     start_date: startDate,
     end_date: endDate,
   };
-  // const params: DataCreateAssessment = {
-  //   name: "Assessment 13",
-  //   job_function: "Arts & Design",
-  //   game: [
-  //     {
-  //       game_id: [1],
-  //       option: []
-  //     }
-  //   ],
-  //   job_position: "Director",
-  //   start_date: "12-05-2022 02:00:00",
-  //   end_date: "12-06-2022 02:00:00",
-  // };
   const handleCreateAssessment = async () => {
     const formData = new FormData();
     formData.append("name", params.name);
@@ -51,21 +52,37 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
       formData.append(`game[${index}][game_id]`, items.game_id.toString());
       formData.append(`game[${index}][option]`, items.option);
     });
+    // gameId.map((item, index) => {
+    //   formData.append(`game[${index}][game_id]`, item.toString());
+    //   if (option && option.length > 0) {
+    //     option.forEach((opt, optIndex) => {
+    //       formData.append(`game[${index}][option][${optIndex}]`, opt);
+    //     });
+    //   } else {
+    //     formData.append(`game[${index}][option]`, option);
+    //   }
+    // });
     formData.append("job_position", params.job_position);
     formData.append("start_date", params.start_date);
     formData.append("end_date", params.end_date);
     const res = await CreateAssessment(formData);
-    console.log(res);
+    toast.info(res.data.message);
   };
   const onSelectDate = (date: any) => {
-    console.log(date);
     setStartDate(date[0]);
     setEndDate(date[1]);
   };
-  console.log(params);
+  const handleFinish = () => {
+    handleCancel();
+    form.resetFields();
+    getData();
+    getDataArchive();
+  };
+  console.log(gameId);
   return (
     <Form
-      onFinish={props.handleCancel}
+      form={form}
+      onFinish={handleFinish}
       layout="vertical"
       variant="filled"
       style={{ maxWidth: 500 }}
@@ -76,6 +93,7 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
         rules={[{ required: true, message: "Please input!" }]}
       >
         <Input
+          value="abc"
           onChange={(e) => setName(e.target.value)}
           style={{ width: "100%" }}
         />
@@ -88,6 +106,9 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
         <SelectTest
           setGameId={(value: number[]) => {
             setGameId(value);
+          }}
+          setOption={(value: string[]) => {
+            setOption(value);
           }}
         ></SelectTest>
       </Form.Item>
@@ -107,7 +128,6 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
         <RangePicker
           format="DD-MM-YYYY HH:mm:ss"
           onChange={(dates, dateStrings) => {
-            console.log(dateStrings);
             onSelectDate(dateStrings);
           }}
           style={{ width: "100%" }}

@@ -13,9 +13,10 @@ interface CustomOption {
 
 interface Props {
   setGameId: (value: number[]) => void;
+  setOption: (value: string[]) => void;
 }
 const SelectTest = (props: Props) => {
-  const { setGameId } = props;
+  const { setGameId, setOption } = props;
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [check, setCheck] = useState(false);
@@ -81,7 +82,19 @@ const SelectTest = (props: Props) => {
     }
   };
   useEffect(() => {
+    const indexes = selectedValues.map((selectedValue) => {
+      return options.findIndex((option) => option.value === selectedValue) + 1;
+    });
+    indexes.sort((a, b) => a - b);
+    if (language) {
+      setGameId([...indexes.filter((index) => index !== 0), 6]);
+    } else {
+      setGameId(indexes);
+    }
+  }, [selectedValues]);
+  useEffect(() => {
     if (check && language === "English") {
+      setOption(["en"]);
       const updatedValues = selectedValues.map((item) =>
         item === "Personalitytest" || item === "Personality test in Vietnamese"
           ? "Personality test in English"
@@ -89,6 +102,7 @@ const SelectTest = (props: Props) => {
       );
       setSelectedValues(updatedValues);
     } else if (check && language === "Vietnamese") {
+      setOption(["vi"]);
       const updatedValues = selectedValues.map((item) =>
         item === "Personalitytest" || item === "Personality test in English"
           ? "Personality test in Vietnamese"
@@ -98,6 +112,7 @@ const SelectTest = (props: Props) => {
     }
     if (!check) {
       setLanguage("");
+      setOption([""]);
       console.log("check");
       setSelectedValues(
         selectedValues.filter(

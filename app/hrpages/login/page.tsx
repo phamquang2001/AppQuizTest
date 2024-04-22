@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
-import useStore from "@/app/Zustand/store";
+import useStore from "@/app/Zustand/LoginStore";
 import { Spin } from "antd";
 import { getCookie } from "@/app/utils/cookie";
 function HRLogin(props: any) {
@@ -19,7 +19,6 @@ function HRLogin(props: any) {
   const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
   const logIn = useStore((state) => state.logIn);
   const logInStatus = useStore((state) => state.logInStatus);
-  const loggedIn = useStore((state) => state.loggedIn);
   const message = useStore((state) => state.message);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const access_token = getCookie("access_token");
@@ -48,7 +47,7 @@ function HRLogin(props: any) {
         router.push("/hrpages/create-assessment");
       }, 2000);
     }
-  }, [logInStatus]);
+  }, [logInStatus, access_token, message, router]);
   const validateEmail = (email: string): boolean => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);

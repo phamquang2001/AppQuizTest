@@ -23,6 +23,7 @@ const useStore = create<State>((set) => ({
     try {
       const data = await logInHrPages({ email, password });
       setCookie("access_token", data.data.data.access_token)
+      setCookie("gmail", data.data.data.email)
       set((state: State) => ({
         ...state,
         loggedIn: true,

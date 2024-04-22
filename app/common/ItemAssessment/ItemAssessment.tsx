@@ -10,24 +10,32 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 import { Modal, Tooltip } from "antd";
+import {
+  archiveAssessment,
+  deleteAssessment,
+  unArchiveAssessment,
+} from "@/app/api/api";
+import useStore from "@/app/Zustand/AssessmentStore";
+import { toast } from "react-toastify";
 
 interface Props {
   archive?: boolean;
-  data?: {
-    id?: number,
-      content: {
-        name: string
-        participants: number,
-        date: number,
-      },
-  }
+  data: {
+    id: number;
+    content: {
+      name: string;
+      participants: number;
+      date: number;
+    };
+  };
 }
 
 function ItemAssessment(props: Props) {
   const { archive, data } = props;
   const [hideEye, setHideEye] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const getData = useStore((state) => state.listAssessment);
+  const getDataArchive = useStore((state) => state.listAssessmentArchive);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -38,6 +46,40 @@ function ItemAssessment(props: Props) {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const handleArchive = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("assessment_id", data?.id.toString());
+      await archiveAssessment(formData);
+      getData();
+      getDataArchive();
+    } catch (error) {
+      console.error("Error archiving assessment:", error);
+    }
+  };
+  const handleUnArchive = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("assessment_id", data?.id.toString());
+      await unArchiveAssessment(formData);
+      getData();
+      getDataArchive();
+    } catch (error) {
+      console.error("Error archiving assessment:", error);
+    }
+  };
+  const handleDelete = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("assessment_id", data?.id.toString());
+      const res = await deleteAssessment(formData);
+      await getData();
+      await getDataArchive();
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error("Error delete assessment");
+    }
   };
   return (
     <div
@@ -75,7 +117,7 @@ function ItemAssessment(props: Props) {
             </button>
           </Tooltip>
           <Tooltip placement="top" title={"Archive assessment"}>
-            <button className="item-menu">
+            <button onClick={handleArchive} className="item-menu">
               <Image width={25} height={25} src="/archived.svg" alt=""></Image>
             </button>
           </Tooltip>
@@ -85,7 +127,7 @@ function ItemAssessment(props: Props) {
             </button>
           </Tooltip>
           <Modal
-            title={<span style={{ fontSize: '24px' }}>Delete assessment</span>}
+            title={<span style={{ fontSize: "24px" }}>Delete assessment</span>}
             open={isModalOpen}
             footer={null}
             onOk={handleOk}
@@ -95,10 +137,16 @@ function ItemAssessment(props: Props) {
               Are you sure you wish to delete this assessment and its content?
             </p>
             <div className="flex gap-4 justify-end">
-              <button onClick={handleCancel} className="bg-slate-300 rounded-lg py-2 px-4 text-lg">
+              <button
+                onClick={handleCancel}
+                className="bg-slate-300 rounded-lg py-2 px-4 text-lg"
+              >
                 Cancel
               </button>
-              <button onClick={handleOk} className="bg-red-200 text-red-600 rounded-lg py-2 px-4 text-lg ">
+              <button
+                onClick={handleDelete}
+                className="bg-red-200 text-red-600 rounded-lg py-2 px-4 text-lg "
+              >
                 Delete
               </button>
             </div>
@@ -107,13 +155,17 @@ function ItemAssessment(props: Props) {
       ) : (
         <div className="menu-assessment active-menu-assessment flex flex-row gap-2 items-center">
           <Tooltip placement="top" title={"Unarchive assessment"}>
-            <button className="item-menu">
+            <button onClick={handleUnArchive} className="item-menu">
               <Image width={25} height={25} src="/archived.svg" alt=""></Image>
             </button>
           </Tooltip>
         </div>
       )}
-      <Text className="text-xl" text="Assessment name" weight={600}></Text>
+      <Text
+        className="text-xl"
+        text={data?.content?.name || "Loading..."}
+        weight={600}
+      ></Text>
       <div
         className="line border-b w-44 "
         style={{
@@ -123,10 +175,12 @@ function ItemAssessment(props: Props) {
       ></div>
       <div>
         <p>
-          Number of participants: <span className="font-semibold">8</span>
+          Number of participants:{" "}
+          <span className="font-semibold">{data?.content?.participants}</span>
         </p>
         <p>
-          Last activity: <span className="font-semibold">6 days ago</span>
+          Last activity:{" "}
+          <span className="font-semibold">{data?.content?.date} days ago</span>
         </p>
       </div>
       <ButtonDetails id={data?.id} />

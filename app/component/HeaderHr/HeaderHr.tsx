@@ -10,12 +10,14 @@ import React, { useState } from "react";
 function HeaderHr(props: any) {
   const [activeButton, setActiveButton] = useState<string>("my-assess");
   const router = useRouter();
+  const username = getCookie("gmail")
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName);
   };
   const handleLogout = async () => {
     await logOutHrPages();
     deleteCookie("access_token");
+    deleteCookie("gmail");
     router.push("/");
     
   };
@@ -55,7 +57,7 @@ function HeaderHr(props: any) {
         </button>
       </div>
       <div className="avatar-hr flex mt-2 items-center gap-3 mr-5">
-        <span className="text-sky-500 font-medium">Username</span>
+        <span className="text-sky-500 font-medium">{username}</span>
         <Dropdown overlay={menu} trigger={["click"]}>
           <button>
             <Image

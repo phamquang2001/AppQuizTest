@@ -149,18 +149,16 @@ const SelectRecruiting = (props: Props) => {
 
   const displayRender = (labels: string[]) => {
     setJobFunction(labels[0]);
-    setJobPosition(labels[1])
+    setJobPosition(labels[1]);
     return (
-      <span>
-        {labels.map((item, index) => {
-          return (
-            <>
-              <span key={index}>{item}</span>
-              <span>{index === labels.length - 1 ? "" : " - "}</span>
-            </>
-          );
-        })}
-      </span>
+      <div>
+        {labels.map((item, index) => (
+          <span key={index}>
+            {item}
+            {index === labels.length - 1 ? "" : " - "}
+          </span>
+        ))}
+      </div>
     );
   };
   return (
