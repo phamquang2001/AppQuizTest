@@ -10,7 +10,12 @@ interface CustomOption {
   desc?: string;
   status?: boolean;
 }
-const SelectTest: React.FC = () => {
+
+interface Props {
+  setGameId: (value: number[]) => void;
+}
+const SelectTest = (props: Props) => {
+  const { setGameId } = props;
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [check, setCheck] = useState(false);
@@ -70,7 +75,7 @@ const SelectTest: React.FC = () => {
 
   const handleSaveButtonClick = () => {
     if (check && language === "") {
-      setRadioChecked(false)
+      setRadioChecked(false);
     } else {
       setDropdownVisible(false);
     }
