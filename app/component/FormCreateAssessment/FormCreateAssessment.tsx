@@ -30,6 +30,19 @@ const FormCreateAssessment: React.FC<Props> = (props) => {
     start_date: startDate,
     end_date: endDate,
   };
+  // const params: DataCreateAssessment = {
+  //   name: "Assessment 13",
+  //   job_function: "Arts & Design",
+  //   game: [
+  //     {
+  //       game_id: [1],
+  //       option: []
+  //     }
+  //   ],
+  //   job_position: "Director",
+  //   start_date: "12-05-2022 02:00:00",
+  //   end_date: "12-06-2022 02:00:00",
+  // };
   const handleCreateAssessment = async () => {
     const res = await CreateAssessment(params);
     console.log(res);
