@@ -6,7 +6,6 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-  QueryClientProviderProps,
 } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
@@ -16,6 +15,7 @@ const queryClient = new QueryClient({
     },
   },
 });
+
 const TanStackWrapper = ({ children }: any) => {
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

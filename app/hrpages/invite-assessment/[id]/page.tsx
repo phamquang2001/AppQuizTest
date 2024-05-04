@@ -9,13 +9,18 @@ import { useParams } from "next/navigation";
 import useStore from "@/app/Zustand/AssessmentStore";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { getDetailAssessment } from "@/app/api/apiHr";
 
 export default function InviteAssessment() {
   const [isOpenInvite, setIsOpenInvite] = useState(false);
   const idAssess = useParams();
-  const getDetailAssessment = useStore((state) => state?.getDetailAssessment);
-  const dataDetail = useStore((state) => state?.dataDetail);
+  const [dataDetail, setDataDetail] = useState<any>({});
   const router = useRouter();
+  const {data: getDetailAssess, isLoading} = useQuery({
+    queryKey: ["getDetailAssessment"],
+    queryFn: () => getDetailAssessment(Number(idAssess.id)),
+  });
   const formatDateRange = (
     startDateStr: string | undefined,
     endDateStr: string | undefined
@@ -25,7 +30,7 @@ export default function InviteAssessment() {
     }
     const startDate = parse(startDateStr, "dd/MM/yyyy HH:mm:ss", new Date());
     const endDate = parse(endDateStr, "dd/MM/yyyy HH:mm:ss", new Date());
-    const formattedStartDate = format(startDate, "dd MMMM yyyy");
+    const formattedStartDate = format(startDateStr, "dd MMMM yyyy");
     const formattedEndDate = format(endDate, "dd MMMM yyyy");
     const daysDifference = differenceInCalendarDays(endDate, startDate);
     const formattedString = `Date: From ${formattedStartDate} to ${formattedEndDate} • ${daysDifference} days`;
@@ -35,13 +40,6 @@ export default function InviteAssessment() {
     dataDetail?.start_date,
     dataDetail?.end_date
   );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getData = async () => {
-    await getDetailAssessment(Number(idAssess.id));
-  };
-  useEffect(() => {
-    getData();
-  }, []);
   const items: MenuProps["items"] = [
     {
       label: (
@@ -54,7 +52,9 @@ export default function InviteAssessment() {
       key: "1",
     },
   ];
-
+  useEffect(()=> {
+    setDataDetail(getDetailAssess?.data?.data?.assessment)
+  },[getDetailAssess])  
   return (
     <div>
       <HeaderHr></HeaderHr>
@@ -88,14 +88,16 @@ export default function InviteAssessment() {
             <Dropdown menu={{ items }} trigger={["click"]}>
               <Button
                 type="primary"
-                icon={<img src="/ic-add.svg" />}
+                icon={
+                <Image height={25} width={25} alt="" src="/ic-add.svg"></Image>
+               }
                 className="h-[40px] btn-create flex flex-row  items-center bg-sky-500"
               >
                 Invite participants
               </Button>
             </Dropdown>
             <Button
-              icon={<img src="/ic-menu.svg" />}
+              icon={<Image height={25} width={25} alt="" src="/ic-menu.svg"></Image>}
               className="border-none rounded-full btn-create flex items-center"
               style={{ width: "40px" }}
             />
@@ -104,7 +106,7 @@ export default function InviteAssessment() {
         <div className="h-[1px] w-full bg-gradient-to-r from-[#fff] via-[#000] to-[#fff] mt-[20px]"></div>
         <IncludedTest game={dataDetail?.games} />
         <div className="rounded-2xl border flex justify-center items-center my-8 py-8">
-          <img src="/nodata.svg" alt=""></img>
+          <Image height={400} width={400} alt="" src="/nodata.svg"/>
         </div>
         {isOpenInvite && (
           <InviteParticipantsModal

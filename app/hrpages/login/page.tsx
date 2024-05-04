@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Space, Spin, Button, Form, Radio } from "antd";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { logInHrPages } from "@/app/api/api";
+import { logInHrPages } from "@/app/api/apiHr";
 import { setCookie } from "@/app/utils/cookie";
 
 type Inputs = {

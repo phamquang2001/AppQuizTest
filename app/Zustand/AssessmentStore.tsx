@@ -1,6 +1,6 @@
 // store.ts
 import { create } from 'zustand';
-import { getDetailAssessment, getListAssessment } from "../api/api";
+import { getDetailAssessment, getListAssessment } from "../api/apiHr";
 
 interface State {
   data: any;

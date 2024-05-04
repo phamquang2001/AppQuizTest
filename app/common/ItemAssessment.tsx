@@ -1,6 +1,6 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import "./styles/ItemAssessment.scss"
+import "./styles/ItemAssessment.scss";
 import Text from "./Text";
 import ButtonDetails from "./ButtonDetails";
 import Image from "next/image";
@@ -14,9 +14,9 @@ import {
   archiveAssessment,
   deleteAssessment,
   unArchiveAssessment,
-} from "@/app/api/api";
-import useStore from "@/app/Zustand/AssessmentStore";
+} from "@/app/api/apiHr";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   archive?: boolean;
@@ -34,52 +34,54 @@ function ItemAssessment(props: Props) {
   const { archive, data } = props;
   const [hideEye, setHideEye] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const getData = useStore((state) => state.listAssessment);
-  const getDataArchive = useStore((state) => state.listAssessmentArchive);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  const queryClient = useQueryClient();
+  const archiveMutation = useMutation({
+    mutationFn: archiveAssessment,
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ["getDataUnArchive"] });
+      await queryClient.invalidateQueries({ queryKey: ["getDataArchive"] });
+      toast.success(data.data.message);
+    },
+    onError: (data: any) => {
+      toast.error(data.data.message);
+    },
+  });
+  const unArchiveMutation = useMutation({
+    mutationFn: unArchiveAssessment,
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ["getDataUnArchive"] });
+      await queryClient.invalidateQueries({ queryKey: ["getDataArchive"] });
+      toast.success(data.data.message);
+    },
+    onError: (data: any) => {
+      toast.error(data.data.message);
+    },
+  });
+  const deleteArchiveMutation = useMutation({
+    mutationFn: deleteAssessment,
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ["getDataUnArchive"] });
+      await queryClient.invalidateQueries({ queryKey: ["getDataArchive"] });
+      toast.success(data.data.message);
+    },
+    onError: (data: any) => {
+      toast.error(data.data.message);
+    },
+  });
   const handleArchive = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("assessment_id", data?.id.toString());
-      await archiveAssessment(formData);
-      getData();
-      getDataArchive();
-    } catch (error) {
-      console.error("Error archiving assessment:", error);
-    }
+    const formData = new FormData();
+    formData.append("assessment_id", data?.id.toString());
+    archiveMutation.mutate(formData);
   };
   const handleUnArchive = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("assessment_id", data?.id.toString());
-      await unArchiveAssessment(formData);
-      getData();
-      getDataArchive();
-    } catch (error) {
-      console.error("Error archiving assessment:", error);
-    }
+    const formData = new FormData();
+    formData.append("assessment_id", data?.id.toString());
+    unArchiveMutation.mutate(formData);
   };
   const handleDelete = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("assessment_id", data?.id.toString());
-      const res = await deleteAssessment(formData);
-      await getData();
-      await getDataArchive();
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error("Error delete assessment");
-    }
+    const formData = new FormData();
+    formData.append("assessment_id", data?.id.toString());
+    deleteArchiveMutation.mutate(formData);
   };
   return (
     <div
@@ -122,7 +124,7 @@ function ItemAssessment(props: Props) {
             </button>
           </Tooltip>
           <Tooltip placement="top" title={"Delete assessment"}>
-            <button onClick={showModal} className="item-menu">
+            <button onClick={() => setIsModalOpen(true)} className="item-menu">
               <DeleteOutlined style={{ fontSize: "25px" }} />
             </button>
           </Tooltip>
@@ -130,15 +132,15 @@ function ItemAssessment(props: Props) {
             title={<span style={{ fontSize: "24px" }}>Delete assessment</span>}
             open={isModalOpen}
             footer={null}
-            onOk={handleOk}
-            onCancel={handleCancel}
+            onOk={() => setIsModalOpen(false)}
+            onCancel={() => setIsModalOpen(false)}
           >
             <p className="py-6 text-lg">
               Are you sure you wish to delete this assessment and its content?
             </p>
             <div className="flex gap-4 justify-end">
               <button
-                onClick={handleCancel}
+                onClick={() => setIsModalOpen(false)}
                 className="bg-slate-300 rounded-lg py-2 px-4 text-lg"
               >
                 Cancel

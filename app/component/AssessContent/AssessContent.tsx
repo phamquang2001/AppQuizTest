@@ -2,30 +2,29 @@
 import ItemAssessment from "@/app/common/ItemAssessment";
 import Text from "@/app/common/Text";
 import { FolderAddFilled } from "@ant-design/icons";
-import { Button, Modal, Spin } from "antd";
-import React, { useEffect, useMemo, useState } from "react";
+import { Modal, Spin } from "antd";
+import React, { useState } from "react";
 import FormCreateAssessment from "../FormCreateAssessment/FormCreateAssessment";
-import useStore from "@/app/Zustand/AssessmentStore";
-import dayjs from "dayjs";
 import { differenceInDays, parse } from "date-fns";
+import { useQuery} from "@tanstack/react-query";
+import { getListAssessment } from "@/app/api/apiHr";
 interface Props {}
 function AssessContent(props: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const data = useStore((state) => state.data);
-  const dataArchive = useStore((state) => state.dataArchive);
-  const getData = useStore((state) => state.listAssessment);
-  const getDataArchive = useStore((state) => state.listAssessmentArchive);
+  const getData = useQuery({
+    queryKey: ["getDataUnArchive"],
+    queryFn: () => getListAssessment(1),
+  });
+  const getDataArchive = useQuery({
+    queryKey: ["getDataArchive"],
+    queryFn: () => getListAssessment(0),
+  });
 
-  useEffect(() => {
-    getData();
-    getDataArchive();
-  }, []);
-
-  const dataAssessment = data?.map((item: any) => {
+  const dataAssessment = getData?.data?.data?.data?.assessments?.map((item: any) => {
     const diffInDays = Math.abs(
       differenceInDays(
         parse(item.start_date, "dd/MM/yyyy HH:mm:ss", new Date()),
-        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date())
       )
     );
     return {
@@ -37,11 +36,11 @@ function AssessContent(props: Props) {
       },
     };
   });
-  const dataAssessmentArchive = dataArchive?.map((item: any) => {
+  const dataAssessmentArchive = getDataArchive?.data?.data?.data?.assessments?.map((item: any) => {
     const diffInDays = Math.abs(
       differenceInDays(
         parse(item.start_date, "dd/MM/yyyy HH:mm:ss", new Date()),
-        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date())
       )
     );
     return {
@@ -53,17 +52,6 @@ function AssessContent(props: Props) {
       },
     };
   });
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   return (
     <div className="flex flex-col gap-10 my-7 ml-32">
       <div className="flex flex-col gap-5">
@@ -74,7 +62,7 @@ function AssessContent(props: Props) {
             weight={600}
           ></Text>
           <button
-            onClick={showModal}
+            onClick={() => setIsModalOpen(true)}
             className="flex flex-row gap-3 items-center mr-14 border rounded-lg p-2 text-white bg-sky-500"
           >
             <FolderAddFilled className="text-white text-xl" />
@@ -84,17 +72,17 @@ function AssessContent(props: Props) {
             title="Create new assessment"
             open={isModalOpen}
             footer={null}
-            onOk={handleOk}
-            onCancel={handleCancel}
+            onOk={() => setIsModalOpen(false)}
+            onCancel={() => setIsModalOpen(false)}
             width={600}
           >
             <FormCreateAssessment
-              handleCancel={handleCancel}
+              handleCancel={() => setIsModalOpen(false)}
             ></FormCreateAssessment>
           </Modal>
         </div>
         <div className="flex flex-wrap gap-10">
-          {dataAssessment ? (
+          {dataAssessment?.length > 0 ? (
             dataAssessment
               ?.slice(0, 9)
               .map((item: any) => <ItemAssessment key={item.id} data={item} />)
@@ -112,7 +100,7 @@ function AssessContent(props: Props) {
           weight={600}
         ></Text>
         <div className="flex flex-wrap  gap-10">
-          {dataAssessmentArchive ? (
+          {dataAssessmentArchive?.length > 0 ? (
             dataAssessmentArchive
               ?.slice(0, 9)
               .map((item: any) => (

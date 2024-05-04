@@ -1,5 +1,5 @@
 "use client";
-import { logOutHrPages } from "@/app/api/api";
+import { logOutHrPages } from "@/app/api/apiHr";
 import Logo from "@/app/common/Logo";
 import { deleteCookie, getCookie } from "@/app/utils/cookie";
 import { Button, Dropdown, Menu } from "antd";

@@ -1,4 +1,4 @@
-import { getDetailAssessment } from "@/app/api/api";
+import { getDetailAssessment } from "@/app/api/apiHr";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import React from "react";

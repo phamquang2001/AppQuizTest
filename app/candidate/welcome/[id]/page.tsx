@@ -1,5 +1,5 @@
 "use client";
-import { candidateLogin } from "@/app/api/api";
+import { candidateLogin } from "@/app/api/apiHr";
 import Header from "@/app/component/Header/Header";
 import { setCookie } from "@/app/utils/cookie";
 import { Button, Input } from "antd";

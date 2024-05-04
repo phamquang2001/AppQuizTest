@@ -1,6 +1,6 @@
 // store.ts
 import { create } from 'zustand';
-import {  getListGameCandidate } from "../api/api";
+import {  getListGameCandidate } from "../api/apiHr";
 
 interface State {
   dataListGame: any;

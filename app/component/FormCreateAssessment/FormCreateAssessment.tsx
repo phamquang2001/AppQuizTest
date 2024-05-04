@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Button, DatePicker, Form, Input } from "antd";
 import SelectTest from "../SelectTest/SelectTest";
 import SelectRecruiting from "../RecruitingForm/SelectRecruiting";
-import { CreateAssessment } from "@/app/api/api";
+import { CreateAssessment } from "@/app/api/apiHr";
 import { DataCreateAssessment } from "@/app/utils/type";
 import { toast } from "react-toastify";
 import useStore from "@/app/Zustand/AssessmentStore";
