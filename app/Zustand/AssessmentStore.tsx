@@ -1,17 +1,20 @@
 // store.ts
-import create from "zustand";
-import { getListAssessment } from "../api/api";
+import { create } from 'zustand';
+import { getDetailAssessment, getListAssessment } from "../api/api";
 
 interface State {
   data: any;
-  dataArchive: any
+  dataArchive: any;
+  dataDetail: any;
   listAssessment: () => Promise<void>;
   listAssessmentArchive: () => Promise<void>;
+  getDetailAssessment: (id: number) => Promise<void>;
 }
 
 const useStore = create<State>((set) => ({
   data: null,
   dataArchive: null,
+  dataDetail: null,
   listAssessment: async () => {
     try {
       const data = await getListAssessment(1);
@@ -35,7 +38,20 @@ const useStore = create<State>((set) => ({
     } catch (error: any) {
       set((state: State) => ({
         ...state,
-
+      }));
+    }
+  },
+  getDetailAssessment: async (id: number) => {
+    try {
+      const data = await getDetailAssessment(id);
+      // console.log(data.data.data.assessment);
+      set((state: State) => ({
+        ...state,
+        dataDetail: data.data.data.assessment,
+      }));
+    } catch (error: any) {
+      set((state: State) => ({
+        ...state,
       }));
     }
   },

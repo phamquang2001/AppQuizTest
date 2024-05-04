@@ -1,7 +1,7 @@
 "use client";
-import BtnLogin from "@/app/common/Button/BtnLogin";
-import InputEmail from "@/app/common/InputEmail/InputEmail";
-import InputPassword from "@/app/common/InputPassword/InputPassword";
+import BtnLogin from "@/app/common/BtnLogin";
+import InputEmail from "@/app/common/InputEmail";
+import InputPassword from "@/app/common/InputPassword";
 import Header from "@/app/component/Header/Header";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,99 +9,113 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import React, { useEffect, useState } from "react";
-import useStore from "@/app/Zustand/LoginStore";
-import { Spin } from "antd";
-import { getCookie } from "@/app/utils/cookie";
+import { Input, Space, Spin, Button, Form, Radio } from "antd";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { logInHrPages } from "@/app/api/api";
+import { setCookie } from "@/app/utils/cookie";
+
+type Inputs = {
+  email: string;
+  password: string;
+};
 function HRLogin(props: any) {
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isValidEmail, setIsValidEmail] = useState<boolean>(true);
-  const logIn = useStore((state) => state.logIn);
-  const logInStatus = useStore((state) => state.logInStatus);
-  const message = useStore((state) => state.message);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const access_token = getCookie("access_token");
-  const handleChange = (value: string) => {
-    setEmail(value);
+  const loginMutation = useMutation({
+    mutationFn: logInHrPages,
+    onSuccess: (data) => {
+      toast.success(data.data.message);
+      router.push("/hrpages/create-assessment");
+      setCookie("access_token", data.data.data.access_token);
+      setCookie("gmail", data.data.data.email);
+      console.log(data);
+    },
+    onError: (data: any) => {
+      toast.error(data.response.data.message);
+      console.log(data);
+    },
+  });
+  const onFinish: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+    loginMutation.mutate(data);
   };
-  const handleSubmit = async () => {
-    setIsValidEmail(validateEmail(email));
-    try {
-      await logIn(email, password);
-      setIsLoading(true);
-      // Các công việc cần thực hiện khi nút được nhấn
-      setTimeout(() => {
-        setIsLoading(false); // Sau khi công việc hoàn thành, tắt trạng thái loading
-      }, 2000);
-    } catch (error) {}
-  };
-  useEffect(() => {
-    if (logInStatus === "rejected") {
-      setTimeout(() => {
-        toast.error(message);
-      }, 2000);
-    } else if (access_token && logInStatus === "fulfilled") {
-      setTimeout(() => {
-        toast.success(message);
-        router.push("/hrpages/create-assessment");
-      }, 2000);
-    }
-  }, [logInStatus, access_token, message, router]);
-  const validateEmail = (email: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
+  const loading = loginMutation.isPending;
+ 
   return (
     <div>
       <Header />
       <div className="flex gap-56 px-20 ">
         <Image src="/hrlogin.svg" alt="" width={550} height={550}></Image>
-        <div className="flex  flex-col gap-5 mt-20">
-          <span className="font-bold text-4xl ">
-            Welcome to <span className="text-sky-500">pytalent</span>
-          </span>
-          <div>
-            <label className="block mb-2 font-bold" htmlFor="inputEmail">
-              Email
-            </label>
-            <InputEmail
-              value={email}
-              onChange={handleChange}
-              id="inputEmail"
-              className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 w-full"
-              placeholder="abc@gmail.com"
-            ></InputEmail>
-          </div>
-          <div>
-            <label className="block mb-2 font-bold" htmlFor="inputPw">
-              Password
-            </label>
-            <InputPassword
-              id="inputPw"
-              placeholder={"Password"}
-              setPassword={setPassword}
-              className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 w-full"
-            />
-          </div>
-          {isLoading ? (
-            <div className="size-10 border border-gray-300 focus:outline-none focus:border-blue-500 w-full text-white bg-gray-300 flex justify-center	">
-              <Spin style={{ fontSize: 24, color: "white" }} size="default" />
-            </div>
-          ) : (
-            <BtnLogin
-              onClick={handleSubmit}
-              className="size-10 border border-gray-300 focus:outline-none focus:border-blue-500 w-full text-white bg-sky-500	"
-              text="Log in"
-            />
-          )}
+        <Form
+          name="normal_login"
+          className="login-form"
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+        >
+          <div className="flex  flex-col gap-5 mt-20">
+            <span className="font-bold text-4xl ">
+              Welcome to <span className="text-sky-500">pytalent</span>
+            </span>
+            <div>
+              <label className="block mb-2 font-bold" htmlFor="inputEmail">
+                Email
+              </label>
 
-          <Link href={"/hrpages/forgot-password"}>
-            <p className="text-sky-500 flex right-0 text-sm underline font-medium justify-end">
-              Forgot password?
-            </p>
-          </Link>
-        </div>
+              <Form.Item
+                className="mb-0"
+                name="email"
+                rules={[
+                  { required: true, message: "Please input your email!" },
+                ]}
+              >
+                <Input
+                  id="inputEmail"
+                  className="site-form-item-icon border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 w-full"
+                  placeholder="abc@gmail.com"
+                />
+              </Form.Item>
+            </div>
+            <div>
+              <label className="block mb-2 font-bold" htmlFor="inputPw">
+                Password
+              </label>
+              <Form.Item
+                className="mb-0"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your Password!" },
+                ]}
+              >
+                <Input.Password
+                  className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-blue-500 w-full"
+                  type="password"
+                  placeholder="Password"
+                />
+              </Form.Item>
+            </div>
+            {loading ? (
+              <div className="size-10 border border-gray-300 focus:outline-none focus:border-blue-500 w-full text-white bg-gray-300 flex justify-center	">
+                <Spin style={{ fontSize: 24, color: "white" }} size="default" />
+              </div>
+            ) : (
+              <Form.Item className="mb-0">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button size-10 border border-gray-300 focus:outline-none focus:border-blue-500 w-full text-white bg-sky-500 hover:bg-sky-600 py-2 rounded-md cursor-pointer"
+                >
+                  Log in
+                </Button>
+              </Form.Item>
+            )}
+
+            <Link href={"/hrpages/forgot-password"}>
+              <p className="text-sky-500 flex right-0 text-sm underline font-medium justify-end">
+                Forgot password?
+              </p>
+            </Link>
+          </div>
+        </Form>
       </div>
       <ToastContainer />
     </div>

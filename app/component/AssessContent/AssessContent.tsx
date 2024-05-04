@@ -1,12 +1,13 @@
 "use client";
-import ItemAssessment from "@/app/common/ItemAssessment/ItemAssessment";
-import Text from "@/app/common/Text/Text";
+import ItemAssessment from "@/app/common/ItemAssessment";
+import Text from "@/app/common/Text";
 import { FolderAddFilled } from "@ant-design/icons";
 import { Button, Modal, Spin } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
 import FormCreateAssessment from "../FormCreateAssessment/FormCreateAssessment";
 import useStore from "@/app/Zustand/AssessmentStore";
-
+import dayjs from "dayjs";
+import { differenceInDays, parse } from "date-fns";
 interface Props {}
 function AssessContent(props: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,66 +15,41 @@ function AssessContent(props: Props) {
   const dataArchive = useStore((state) => state.dataArchive);
   const getData = useStore((state) => state.listAssessment);
   const getDataArchive = useStore((state) => state.listAssessmentArchive);
-  const [name,setName] = useState()
 
   useEffect(() => {
     getData();
-    setName(data)
-  }, []);
-
-  useEffect(() => {
     getDataArchive();
   }, []);
 
   const dataAssessment = data?.map((item: any) => {
-    const parseDateFromString = (dateString: string) => {
-      const [day, month, year] = dateString.split("/");
-      const [hours, minutes, seconds] = dateString.split(" ")[1].split(":");
-      return new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes),
-        parseInt(seconds)
-      );
-    };
-    const startDate = parseDateFromString(item.start_date);
-    const endDate = parseDateFromString(item.end_date);
-    const differenceInMilliseconds = endDate.getTime() - startDate.getTime();
-    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    const diffInDays = Math.abs(
+      differenceInDays(
+        parse(item.start_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+      )
+    );
     return {
       id: item.id,
       content: {
         name: item.name,
         participants: 8,
-        date: differenceInDays,
+        date: diffInDays,
       },
     };
   });
   const dataAssessmentArchive = dataArchive?.map((item: any) => {
-    const parseDateFromString = (dateString: string) => {
-      const [day, month, year] = dateString.split("/");
-      const [hours, minutes, seconds] = dateString.split(" ")[1].split(":");
-      return new Date(
-        parseInt(year),
-        parseInt(month) - 1,
-        parseInt(day),
-        parseInt(hours),
-        parseInt(minutes),
-        parseInt(seconds)
-      );
-    };
-    const startDate = parseDateFromString(item.start_date);
-    const endDate = parseDateFromString(item.end_date);
-    const differenceInMilliseconds = endDate.getTime() - startDate.getTime();
-    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+    const diffInDays = Math.abs(
+      differenceInDays(
+        parse(item.start_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+        parse(item.end_date, "dd/MM/yyyy HH:mm:ss", new Date()),
+      )
+    );
     return {
       id: item.id,
       content: {
         name: item.name,
         participants: 8,
-        date: differenceInDays,
+        date: diffInDays,
       },
     };
   });

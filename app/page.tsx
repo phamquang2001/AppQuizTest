@@ -1,5 +1,4 @@
 "use client";
-
 import HRLogin from "./hrpages/login/page";
 import HrPage from "./hrpages/page";
 import { ToastContainer, toast } from "react-toastify";

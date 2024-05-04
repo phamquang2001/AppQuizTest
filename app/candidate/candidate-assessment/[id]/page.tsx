@@ -1,9 +1,21 @@
+"use client";
+import useStore from "@/app/Zustand/CandidateStore";
 import ItemTest from "@/app/common/ItemTest";
 import Header from "@/app/component/Header/Header";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useMemo } from "react";
 
 interface Props {}
 function CandidateAssessment(props: Props) {
+  const getListGameCandidate = useStore((state) => state.getListGameCandidate);
+  const dataListGame = useStore((state) => state.dataListGame);
+  const router = useRouter()
+  useEffect(() => {
+    getListGameCandidate();
+  }, [getListGameCandidate]);
+  const handleOpen = (item: any) => {
+    router.push(`/candidate/assessment/${item.id}`)
+  };
   return (
     <div>
       <Header />
@@ -33,13 +45,19 @@ function CandidateAssessment(props: Props) {
         </div>
         <div className="flex flex-col gap-3">
           <h1 className="font-semibold text-3xl">Choose a test</h1>
-          <ItemTest
-            image="/itemtest.svg"
-            name="Verbal challenge"
-            time={90}
-            point={100}
-            status="Completed"
-          ></ItemTest>
+          <div className="flex flex-wrap gap-6">
+            {dataListGame?.map((item: any) => (
+              <button key={item.id} onClick={() => handleOpen(item)}>
+                <ItemTest
+                  image="/itemtest.svg"
+                  name={item.name}
+                  time={item.time}
+                  point={item.score}
+                  status={0}
+                ></ItemTest>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

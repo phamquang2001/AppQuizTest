@@ -1,7 +1,9 @@
 import React from "react";
 import Header from "../component/Header/Header";
-import Logo from "../common/Logo/Logo";
+import Logo from "../common/Logo";
 import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './style.scss'
 function HrPage() {
   return (
@@ -52,6 +54,7 @@ function HrPage() {
           </defs>
         </svg>
       </div>
+      <ToastContainer></ToastContainer>
     </div>
   );
 }

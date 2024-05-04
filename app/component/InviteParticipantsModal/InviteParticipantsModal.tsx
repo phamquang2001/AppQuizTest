@@ -5,9 +5,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InputMultipleEmail from "../InputMultipleEmail/InputMultipleEmail";
 import UploadFileModal from "../UploadFileModal/UploadFileModal";
+import { inviteCandidate } from "@/app/api/api";
+import { useParams } from "next/navigation";
 
-export default function InviteParticipantsModal({ open, onClose }: any) {
+export default function InviteParticipantsModal({ open, onClose, token }: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const id = useParams().id;
+  const currentUrl = window.location.href;
+  const baseUrl = currentUrl.split("/hrpages/")[0];
+  const newUrl = `${baseUrl}/candidate/welcome/${token}`;
+  const [listEmail, setListEmail] = useState<string[]>([]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -29,6 +36,16 @@ export default function InviteParticipantsModal({ open, onClose }: any) {
         toast.error("Failed to copy link.");
       });
   };
+
+  const handleSendInvite = async () => {
+    const res = await inviteCandidate({
+      assessment_id: id,
+      type: 1,
+      list_email: listEmail
+    });
+    console.log(res)
+  };
+  console.log("listEmail",listEmail)
   return (
     <>
       {isModalOpen ? (
@@ -48,10 +65,13 @@ export default function InviteParticipantsModal({ open, onClose }: any) {
           centered
         >
           <div className="flex justify-between gap-[10px] mt-[20px]">
-            <InputMultipleEmail></InputMultipleEmail>
+            <InputMultipleEmail
+              setListEmail={(e: string[]) => setListEmail(e)}
+            ></InputMultipleEmail>
             <Button
               className="m-1 h-full py-2 w-full max-w-[140px] bg-sky-500"
               type="primary"
+              onClick={handleSendInvite}
             >
               Send invite
             </Button>
@@ -67,20 +87,10 @@ export default function InviteParticipantsModal({ open, onClose }: any) {
                 disabled
                 placeholder="Enter email, seperated by comma"
                 className="h-[56px] text-[#6F767E] text-[16px] font-[400] leading-[24px]"
-                value={window.location.href.replace(
-                  "/hrpages/invite-assessment/",
-                  "/candidate/welcome/"
-                )}
+                value={newUrl}
                 suffix={
                   <button
-                    onClick={() =>
-                      copyLink(
-                        window.location.href.replace(
-                          "/hrpages/invite-assessment/",
-                          "/candidate/welcome/"
-                        )
-                      )
-                    }
+                    onClick={() => copyLink(newUrl)}
                     className="text-[#009DBE] flex items-center gap-[10px]"
                   >
                     <p className="text-[16px] font-[500] leading-[24px]">

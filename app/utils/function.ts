@@ -1,12 +1,4 @@
-export const saveDataToLocalStorage = (key: string, data: any) => {
-  localStorage.setItem(key, JSON.stringify(data));
-};
-
-export const getDataFromLocalStorage = (key: string) => {
-  const data = localStorage.getItem(key);
-  return data ? JSON.parse(data) : null;
-};
-
-export const removeDataFromLocalStorage = (key: string) => {
-  localStorage.removeItem(key);
-};
+export const validateEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };

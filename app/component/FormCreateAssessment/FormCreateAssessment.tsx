@@ -26,16 +26,6 @@ const FormCreateAssessment = (props: Props) => {
   const params: DataCreateAssessment = {
     name: name,
     job_function: jobFunction,
-    // game: [
-    //   {
-    //     game_id: [1],
-    //     option: option,
-    //   },
-    //   {
-    //     game_id: [2],
-    //     option: option,
-    //   },
-    // ],
     game: gameId.map((id) => ({
       game_id: [id],
       option: id === 6 ? option : [],
@@ -52,16 +42,6 @@ const FormCreateAssessment = (props: Props) => {
       formData.append(`game[${index}][game_id]`, items.game_id.toString());
       formData.append(`game[${index}][option]`, items.option);
     });
-    // gameId.map((item, index) => {
-    //   formData.append(`game[${index}][game_id]`, item.toString());
-    //   if (option && option.length > 0) {
-    //     option.forEach((opt, optIndex) => {
-    //       formData.append(`game[${index}][option][${optIndex}]`, opt);
-    //     });
-    //   } else {
-    //     formData.append(`game[${index}][option]`, option);
-    //   }
-    // });
     formData.append("job_position", params.job_position);
     formData.append("start_date", params.start_date);
     formData.append("end_date", params.end_date);

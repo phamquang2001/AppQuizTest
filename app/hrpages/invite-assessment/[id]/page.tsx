@@ -1,17 +1,47 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Dropdown, Image, type MenuProps } from "antd";
-import Link from "antd/es/typography/Link";
+import React, { useEffect, useState } from "react";
+import { Button, Dropdown, type MenuProps } from "antd";
 import IncludedTest from "@/app/component/IncludedTest/IncludedTest";
 import InviteParticipantsModal from "@/app/component/InviteParticipantsModal/InviteParticipantsModal";
 import HeaderHr from "@/app/component/HeaderHr/HeaderHr";
-import { useRouter } from "next/router";
+import { format, differenceInCalendarDays, parse } from "date-fns";
+import { useParams } from "next/navigation";
+import useStore from "@/app/Zustand/AssessmentStore";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function InviteAssessment() {
   const [isOpenInvite, setIsOpenInvite] = useState(false);
-  // const router = useRouter();
-  // const { id } = router.query;
-
+  const idAssess = useParams();
+  const getDetailAssessment = useStore((state) => state?.getDetailAssessment);
+  const dataDetail = useStore((state) => state?.dataDetail);
+  const router = useRouter();
+  const formatDateRange = (
+    startDateStr: string | undefined,
+    endDateStr: string | undefined
+  ) => {
+    if (!startDateStr || !endDateStr) {
+      return "";
+    }
+    const startDate = parse(startDateStr, "dd/MM/yyyy HH:mm:ss", new Date());
+    const endDate = parse(endDateStr, "dd/MM/yyyy HH:mm:ss", new Date());
+    const formattedStartDate = format(startDate, "dd MMMM yyyy");
+    const formattedEndDate = format(endDate, "dd MMMM yyyy");
+    const daysDifference = differenceInCalendarDays(endDate, startDate);
+    const formattedString = `Date: From ${formattedStartDate} to ${formattedEndDate} • ${daysDifference} days`;
+    return formattedString;
+  };
+  const formattedString = formatDateRange(
+    dataDetail?.start_date,
+    dataDetail?.end_date
+  );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getData = async () => {
+    await getDetailAssessment(Number(idAssess.id));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
   const items: MenuProps["items"] = [
     {
       label: (
@@ -24,6 +54,7 @@ export default function InviteAssessment() {
       key: "1",
     },
   ];
+
   return (
     <div>
       <HeaderHr></HeaderHr>
@@ -31,17 +62,25 @@ export default function InviteAssessment() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[10px]">
             <Button
-              icon={<img className="w-full h-full" src="/ic-back.svg" />}
+              onClick={() => router.back()}
+              icon={
+                <Image
+                  className=""
+                  alt=""
+                  width={30}
+                  height={30}
+                  src={"/ic-back.svg"}
+                ></Image>
+              }
               className="border-none rounded-full btn-create flex items-center"
               style={{ width: "40px" }}
             />
             <div>
               <p className="text-[20px] leading-[28px] font-[500] text-[#111315]">
-                Assessment for UX Designer
+                {dataDetail?.name}
               </p>
               <p className="text-[12px] leading-[16px] font-[400] text-[#111315]">
-                <span className="text-[#6F767E]">Date: </span>From 03 March 2022
-                to 20 March 2022 • 18 days
+                <span>{formattedString}</span>
               </p>
             </div>
           </div>
@@ -63,12 +102,13 @@ export default function InviteAssessment() {
           </div>
         </div>
         <div className="h-[1px] w-full bg-gradient-to-r from-[#fff] via-[#000] to-[#fff] mt-[20px]"></div>
-        <IncludedTest />
+        <IncludedTest game={dataDetail?.games} />
         <div className="rounded-2xl border flex justify-center items-center my-8 py-8">
           <img src="/nodata.svg" alt=""></img>
         </div>
         {isOpenInvite && (
           <InviteParticipantsModal
+            token={dataDetail?.token}
             open={isOpenInvite}
             onClose={() => setIsOpenInvite(false)}
           />

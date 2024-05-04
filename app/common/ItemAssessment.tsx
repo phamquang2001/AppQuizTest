@@ -1,8 +1,8 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import Text from "../Text/Text";
-import "./style.scss";
-import ButtonDetails from "../ButtonDetails/ButtonDetails";
+import "./styles/ItemAssessment.scss"
+import Text from "./Text";
+import ButtonDetails from "./ButtonDetails";
 import Image from "next/image";
 import {
   DeleteOutlined,

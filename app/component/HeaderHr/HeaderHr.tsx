@@ -1,6 +1,6 @@
 "use client";
 import { logOutHrPages } from "@/app/api/api";
-import Logo from "@/app/common/Logo/Logo";
+import Logo from "@/app/common/Logo";
 import { deleteCookie, getCookie } from "@/app/utils/cookie";
 import { Button, Dropdown, Menu } from "antd";
 import Image from "next/image";
@@ -23,7 +23,7 @@ function HeaderHr(props: any) {
   };
 
   const handleResetPassword = () => {
-    // Xử lý đặt lại mật khẩu
+
   };
   const menu = (
     <Menu>

@@ -1,5 +1,5 @@
-import BtnLogin from "@/app/common/Button/BtnLogin";
-import Logo from "@/app/common/Logo/Logo";
+import BtnLogin from "@/app/common/BtnLogin";
+import Logo from "@/app/common/Logo";
 import React from "react";
 
 function Header(props: any) {

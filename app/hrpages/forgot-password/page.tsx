@@ -1,7 +1,7 @@
 "use client";
-import BtnLogin from "@/app/common/Button/BtnLogin";
-import InputEmail from "@/app/common/InputEmail/InputEmail";
-import InputPassword from "@/app/common/InputPassword/InputPassword";
+import BtnLogin from "@/app/common/BtnLogin";
+import InputEmail from "@/app/common/InputEmail";
+import InputPassword from "@/app/common/InputPassword";
 import Header from "@/app/component/Header/Header";
 import Image from "next/image";
 import Link from "next/link";
