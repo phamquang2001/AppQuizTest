@@ -38,7 +38,6 @@ export default function InviteParticipantsModal({ open, onClose, token }: any) {
   const sendInvite = useMutation({
     mutationFn: inviteCandidate,
     onSuccess: async (data) => {
-      console.log(data)
       toast.success(data.data.message);
     },
     onError: (data: any) => {

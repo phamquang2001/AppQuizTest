@@ -8,9 +8,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useEffect, useState } from "react";
-import { Input, Space, Spin, Button, Form, Radio } from "antd";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import React from "react";
+import { Input, Spin, Button, Form } from "antd";
+import { SubmitHandler} from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { logInHrPages } from "@/app/api/apiHr";
 import { setCookie } from "@/app/utils/cookie";
@@ -23,16 +23,14 @@ function HRLogin(props: any) {
   const router = useRouter();
   const loginMutation = useMutation({
     mutationFn: logInHrPages,
-    onSuccess: (data) => {
-      toast.success(data.data.message);
-      router.push("/hrpages/create-assessment");
+    onSuccess: async (data) => {
       setCookie("access_token", data.data.data.access_token);
       setCookie("gmail", data.data.data.email);
-      console.log(data);
+      await router.push("/hrpages/create-assessment");
+      toast.success(data.data.message);
     },
     onError: (data: any) => {
       toast.error(data.response.data.message);
-      console.log(data);
     },
   });
   const onFinish: SubmitHandler<Inputs> = (data) => {

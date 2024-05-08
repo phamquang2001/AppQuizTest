@@ -10,21 +10,16 @@ interface Game {
   id: number;
 }
 function page(props: Props) {
-  const listGame = useStore((state) => state.dataListGame);
-  const getListGameCandidate = useStore((state) => state.getListGameCandidate);
-
+  const listGame = useStore((state) => state.dataListGame)
   const router = useRouter();
   const params = useParams();
   const filteredData = listGame.filter(
     (game: Game) => game.id === Number(params.id)
   );
-  useEffect(() => {
-    getListGameCandidate();
-  }, []);
   const handleStart = () =>{
     router.push(`/candidate/assessment/${params.id}/playing`)
   }
-  return (
+    return (
     <div>
       <div className="py-10 px-20 flex items-center gap-3 font-semibold">
         <button onClick={() => router.back()}>

@@ -15,3 +15,14 @@ export interface DataCreateAssessment {
   start_date: string;
   end_date: string;
 }
+
+export interface loginCandidate {
+  token: string;
+  email: string;
+}
+export interface answerType {
+  id: number;
+  answer: string;
+  game_id: number;
+  is_skip: number;
+}

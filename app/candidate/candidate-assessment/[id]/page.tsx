@@ -16,6 +16,7 @@ function CandidateAssessment(props: Props) {
   const handleOpen = (item: any) => {
     router.push(`/candidate/assessment/${item.id}`)
   };
+  console.log(dataListGame)
   return (
     <div>
       <Header />
@@ -51,9 +52,9 @@ function CandidateAssessment(props: Props) {
                 <ItemTest
                   image="/itemtest.svg"
                   name={item.name}
-                  time={item.time}
+                  time={item.used_time}
                   point={item.score}
-                  status={0}
+                  status={item.status_text}
                 ></ItemTest>
               </button>
             ))}

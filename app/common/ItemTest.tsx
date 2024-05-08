@@ -5,15 +5,15 @@ interface Props {
   name?: string;
   time?: number;
   point?: number;
-  status?: number;
+  status?: string;
 }
 function ItemTest(props: Props) {
   const { image, name, time, point, status } = props;
-  const getStatusText = (status?: number): object => {
+  const getStatusText = (status?: string): object => {
     switch (status) {
-      case 0:
+      case "Not started":
         return { text: "Not started", color: "bg-orange-300" };
-      case 100:
+      case "Completed":
         return { text: "Completed", color: "bg-green-300" };
       default:
         return { text: "In progress", color: "bg-red-300" };
@@ -31,7 +31,7 @@ function ItemTest(props: Props) {
         </div>
         <div className="flex gap-1">
           <Image width={16} height={16} src="/ic-point.svg" alt="" />
-          <span>{point}s</span>
+          <span>{point}</span>
         </div>
       </div>
       <div

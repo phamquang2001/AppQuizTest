@@ -5,7 +5,6 @@ import SelectRecruiting from "../RecruitingForm/SelectRecruiting";
 import { CreateAssessment } from "@/app/api/apiHr";
 import { DataCreateAssessment } from "@/app/utils/type";
 import { toast } from "react-toastify";
-import useStore from "@/app/Zustand/AssessmentStore";
 const { RangePicker } = DatePicker;
 
 interface Props {
@@ -21,8 +20,6 @@ const FormCreateAssessment = (props: Props) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [form] = Form.useForm();
-  const getData = useStore((state) => state.listAssessment);
-  const getDataArchive = useStore((state) => state.listAssessmentArchive);
   const params: DataCreateAssessment = {
     name: name,
     job_function: jobFunction,
@@ -55,10 +52,7 @@ const FormCreateAssessment = (props: Props) => {
   const handleFinish = () => {
     handleCancel();
     form.resetFields();
-    getData();
-    getDataArchive();
   };
-  console.log(gameId);
   return (
     <Form
       form={form}

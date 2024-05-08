@@ -2,29 +2,38 @@
 import { logOutHrPages } from "@/app/api/apiHr";
 import Logo from "@/app/common/Logo";
 import { deleteCookie, getCookie } from "@/app/utils/cookie";
-import { Button, Dropdown, Menu } from "antd";
+import { useMutation } from "@tanstack/react-query";
+import {  Dropdown, Menu } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 function HeaderHr(props: any) {
   const [activeButton, setActiveButton] = useState<string>("my-assess");
   const router = useRouter();
-  const username = getCookie("gmail")
+  const username = getCookie("gmail");
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName);
   };
+  const logOut = useMutation({
+    mutationFn: () => logOutHrPages(),
+    onSuccess: async (data) => {
+      deleteCookie("access_token");
+      deleteCookie("gmail");
+      await router.push("/");
+      toast.success(data.data.message);
+    },
+    onError: (data: any) => {
+      toast.error(data.data.message);
+    },
+  });
+
   const handleLogout = async () => {
-    await logOutHrPages();
-    deleteCookie("access_token");
-    deleteCookie("gmail");
-    router.push("/");
-    
+    await logOut.mutate();
   };
 
-  const handleResetPassword = () => {
-
-  };
+  const handleResetPassword = () => {};
   const menu = (
     <Menu>
       <Menu.Item onClick={handleLogout} key="logout">

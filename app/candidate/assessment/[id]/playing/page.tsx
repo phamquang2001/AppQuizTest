@@ -3,67 +3,138 @@ import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import useStore from "@/app/Zustand/CandidateStore";
-import useStoreQuest from "@/app/Zustand/QuestionStore";
+import { useMutation } from "@tanstack/react-query";
+import {
+  answerQuestion,
+  finishGame,
+  generateQuestion,
+} from "@/app/api/apiCandidate";
+import Score from "@/app/component/Score/Score";
+import NumericalChallenge from "@/app/component/ContentQuestion/NumericalChallenge/NumericalChallenge";
+import VerbalChallenge from "@/app/component/ContentQuestion/VerbalChallenge/VerbalChallenge";
 interface Game {
   id: number;
 }
-export default function TestNumericalChallenge() {
+export default function Challenge() {
   const listGame = useStore((state) => state.dataListGame);
-  const getListGameCandidate = useStore((state) => state.getListGameCandidate);
-  const generateQuestion = useStoreQuest((state) => state.generateQuestion);
-  const answerQuestion = useStoreQuest((state) => state.answerQuestion);
-  const dataQuestion = useStoreQuest((state) => state.dataQuestion);
-  const stateQuestion = useStoreQuest((state) => state.stateQuestion);
-  const time_end = useStoreQuest((state) => state.time_end);
-  const game_ended = useStoreQuest((state) => state.game_ended);
   const [showCountDown, setShowCountDown] = useState(false);
   const [stateQuest, setStateQuestion] = useState(-1);
-  const [isSkip, setSkip] = useState(0);
+  const [time, setTime] = useState<number>(250);
   const router = useRouter();
   const id = useParams().id;
-
+  const [question, setQuestion] = useState<any>();
   const filteredData = listGame.filter((game: Game) => game.id === Number(id));
-  useEffect(() => {
-    getListGameCandidate();
-    generateQuestion(Number(id));
-    if(game_ended === false){
-      setShowCountDown(true)
-    }
-    setTimeout(() => {
-      setShowCountDown(false);
-    }, 2000);
-  }, []);
+  const [dataFinish, setDataFinish] = useState<any>();
+  const list = [
+    {
+      key: 1,
+      component: (
+        <VerbalChallenge
+          expression={question?.question?.content?.question?.expression}
+        />
+      ),
+    },
+    {
+      key: 2,
+      component: (
+        <NumericalChallenge
+          expression={question?.question?.content?.question?.expression}
+        />
+      ),
+    },
+  ];
+  const generateData = useMutation({
+    mutationFn: generateQuestion,
+    onSuccess: async (data: any) => {
+      await setTime(data.data.data.time - data.data.data.used_time);
+      setQuestion(data.data.data);
+      setInterval(() => {
+        setTime((prev) => prev - 1);
+      }, 1000);
+    },
+  });
+  const handleAnswerQuestion = useMutation({
+    mutationFn: answerQuestion,
+    onSuccess: async (data: any) => {
+      if (data?.data.data.result === 1) {
+        setStateQuestion(1);
+        setTimeout(() => {
+          setStateQuestion(-1);
+          setQuestion(data.data.data);
+        }, 1000);
+      } else if (data?.data.data.result === 0) {
+        setStateQuestion(0);
+        setTimeout(() => {
+          setStateQuestion(-1);
+          setQuestion(data.data.data);
+        }, 1000);
+      } else {
+        setQuestion(data.data.data);
+      }
+    },
+  });
+  const handleFinish = useMutation({
+    mutationFn: finishGame,
+    onSuccess: (data: any) => {
+      setDataFinish(data?.data);
+      setTimeout(() => {
+        router.back();
+        router.back();
+      }, 5000);
+    },
+  });
   const handleSkip = () => {
-    setSkip(1);
+    handleAnswerQuestion.mutate({
+      id: question?.question?.id,
+      answer: "",
+      game_id: Number(id),
+      is_skip: 1,
+    });
   };
   const handleAnswer = async (value: any) => {
-    const res = await answerQuestion(
-      dataQuestion?.question?.id,
-      value,
-      Number(id),
-      isSkip
-    );
-    if (stateQuestion === 1) {
-      setStateQuestion(1);
-      setTimeout(() => {
-        setStateQuestion(-1);
-      }, 1000);
-    } else if (stateQuestion === 0) {
-      setStateQuestion(0);
-      setTimeout(() => {
-        setStateQuestion(-1);
-      }, 1000);
+    handleAnswerQuestion.mutate({
+      id: question?.question?.id,
+      answer: value,
+      game_id: Number(id),
+      is_skip: 0,
+    });
+    if (question?.answered_question_num === 31) {
+      handleFinish.mutate(Number(id));
     }
-    await generateQuestion(Number(id));
   };
-
-  console.log(game_ended);
-  console.log(time_end);
-  console.log(filteredData)
-  console.log(showCountDown)
+  useEffect(() => {
+    if (time === 0 || question?.game_ended) {
+      handleFinish.mutate(Number(id));
+    }
+  }, [time]);
+  useEffect(() => {
+    setTimeout(() => {
+      setShowCountDown(false);
+      generateData.mutate(Number(id));
+    }, 3000);
+    setShowCountDown(true);
+  }, []);
+  useEffect(() => {
+    const handleKeyPress = (event: any) => {
+      if (event.key === "ArrowUp") {
+        handleSkip();
+      } else if (event.key === "ArrowLeft") {
+        handleAnswer(question?.question?.content?.question?.result_1);
+      } else if (event.key === "ArrowRight") {
+        handleAnswer(question?.question?.content?.question?.result_2);
+      }
+    };
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [
+    question?.question?.content?.question?.result_1,
+    question?.question?.content?.question?.result_2,
+  ]);
   return (
     <>
-      {showCountDown && !game_ended && (
+      {showCountDown && !question?.game_ended && (
         <div className="flex items-center justify-center h-[700px]">
           <Image
             width={200}
@@ -74,8 +145,8 @@ export default function TestNumericalChallenge() {
           ></Image>
         </div>
       )}
-      {!showCountDown && !game_ended && (
-        <div className="relative p-8">
+      {!showCountDown && !question?.game_ended && !dataFinish && (
+        <div autoFocus className="relative p-8">
           <div className="absolute top-0 z-[-1] left-0">
             <Image src="/Game Background.png" alt="" width={800} height={500} />
           </div>
@@ -112,7 +183,7 @@ export default function TestNumericalChallenge() {
                     alt=""
                   />
                   <p className="text-[#111315] font-[600] text-[16px] leading-[24px]">
-                    {time_end}
+                    {time}
                   </p>
                 </div>
                 <div className="flex gap-[10px] items-center">
@@ -123,8 +194,8 @@ export default function TestNumericalChallenge() {
                     alt=""
                   />
                   <p className="text-[#111315] font-[600] text-[16px] leading-[24px]">
-                    {dataQuestion?.answered_question_num}/
-                    {dataQuestion?.total_question}
+                    {question?.answered_question_num + 1}/
+                    {question?.total_question}
                   </p>
                 </div>
                 <div className="flex gap-[10px] items-center">
@@ -135,7 +206,7 @@ export default function TestNumericalChallenge() {
                     alt=""
                   />
                   <p className="text-[#111315] font-[600] text-[16px] leading-[24px]">
-                    {dataQuestion?.total_score}
+                    {question?.total_score}
                   </p>
                 </div>
               </div>
@@ -150,19 +221,15 @@ export default function TestNumericalChallenge() {
                 height={80}
               />
             </div>
-            <p className="text-[16px] leading-[24px] font-[500] text-[#111315] text-center my-[15px]">
-              Choose the number that is closer to the right answer.
-            </p>
-            <div className="mt-[30px] relative">
-              <div className=" bg-gradient-to-r from-[#009DBE] to-[#CBEBF1] w-full p-1 max-w-[800px] mx-auto h-[100px] rounded-[32px]">
-                <input
-                  type="text"
-                  value={dataQuestion?.question?.content?.question?.expression}
-                  className="text-[#111315] h-full w-full mx-auto bg-gradient-to-t from-[#CCEBF2] to-[#F4FDFF] rounded-[32px] outline-none p-4 text-center text-[40px] font-[700] focus:text-[#111315]"
-                />
-              </div>
-              {stateQuestion !== -1 && (
-                <div className="absolute flex items-center justify-center z-10 w-full top-[50%] translate-y-[-50%]">
+            <div className="content relative">
+              {list.map((item) => {
+                if ((item.key === Number(id))) {
+                  return item.component;
+                }
+                return null;
+              })}
+              {stateQuest !== -1 && (
+                <div className="absolute flex items-center justify-center z-10 w-full top-[0px] translate-y-[-50%]">
                   {stateQuest === 1 && (
                     <Image
                       width={80}
@@ -182,6 +249,7 @@ export default function TestNumericalChallenge() {
                 </div>
               )}
             </div>
+
             <div className="mt-[30px]">
               <div>
                 <p className="uppercase text-[#111315] text-[16px] leading-[24px] font-[600] text-center">
@@ -203,12 +271,12 @@ export default function TestNumericalChallenge() {
               <div className="flex gap-[200px] justify-center">
                 <div className="flex items-center gap-[20px]">
                   <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap">
-                    {dataQuestion?.question?.content?.question?.result_1}
+                    {question?.question?.content?.question?.result_1}
                   </p>
                   <button
                     onClick={() =>
                       handleAnswer(
-                        dataQuestion?.question?.content?.question?.result_1
+                        question?.question?.content?.question?.result_1
                       )
                     }
                   >
@@ -225,7 +293,7 @@ export default function TestNumericalChallenge() {
                   <button
                     onClick={() =>
                       handleAnswer(
-                        dataQuestion?.question?.content?.question?.result_2
+                        question?.question?.content?.question?.result_2
                       )
                     }
                   >
@@ -238,7 +306,7 @@ export default function TestNumericalChallenge() {
                     />
                   </button>
                   <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap">
-                    {dataQuestion?.question?.content?.question?.result_2}
+                    {question?.question?.content?.question?.result_2}
                   </p>
                 </div>
               </div>
@@ -246,33 +314,8 @@ export default function TestNumericalChallenge() {
           </div>
         </div>
       )}
-      {game_ended && (
-        <div className="relative p-8">
-          <div className="absolute top-0 z-[-1] left-0">
-            <Image src="/Game Background.png" alt="" width={800} height={500} />
-          </div>
-          <div className="absolute top-0 z-[-1] right-0">
-            <Image
-              src="/Game Background 2.png"
-              alt=""
-              width={800}
-              height={500}
-            />
-          </div>
-          <Image
-            src="/ic-close.svg"
-            width={40}
-            height={50}
-            alt=""
-            className="h-[40px] w-[40px] active:scale-[0.85] transition-all"
-            onClick={() => router.back()}
-          />
-          <div className="font-medium bg-white px-12 py-6 border-[1px] border-[#009DBE] rounded-[16px] w-[700px]  mx-auto h-[500px] flex items-center justify-center ">
-            <div className="mt-[30px] font-bold text-3xl text-blue-500">
-              Your Score:  {filteredData[0]?.score}
-            </div>
-          </div>
-        </div>
+      {(question?.game_ended || dataFinish?.success) && (
+        <Score score={dataFinish?.data?.score} />
       )}
     </>
   );

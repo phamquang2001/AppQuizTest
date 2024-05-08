@@ -1,7 +1,8 @@
 "use client";
-import { candidateLogin } from "@/app/api/apiHr";
+import { candidateLogin } from "@/app/api/apiCandidate";
 import Header from "@/app/component/Header/Header";
 import { setCookie } from "@/app/utils/cookie";
+import { useMutation } from "@tanstack/react-query";
 import { Button, Input } from "antd";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,18 +16,20 @@ export default function Welcome() {
   const router = useRouter();
   const token = useParams().id;
   const [email, setEmail] = useState("");
+  const logIn = useMutation({
+    mutationFn: candidateLogin,
+    onSuccess: (data) => {
+      toast.success(data.data.message);
+      router.push(`/candidate/candidate-assessment/${token}`);
+      setCookie("access_token_candidate", data.data.data.access_token);
+    },
+    onError: (data: any) => {
+      console.log(data);
+      toast.error(data.response.data.message);
+    },
+  });
   const handleLogin = async () => {
-    try {
-      const res = await candidateLogin(token as string, email);
-      console.log(res);
-      if (res.status) {
-        toast.success(res.data.message);
-        router.push(`/candidate/candidate-assessment/${token}`);
-        setCookie("access_token_candidate", res.data.data.access_token);
-      }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message);
-    }
+    logIn.mutate({ token: token as string, email: email });
   };
   return (
     <div>

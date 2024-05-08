@@ -1,6 +1,6 @@
 // store.ts
 import { create } from "zustand";
-import { answerQuestion, finishGame, generateQuestion } from "../api/apiHr";
+import { answerQuestion, finishGame, generateQuestion } from "../api/apiCandidate";
 
 interface State {
   dataQuestion: any;
