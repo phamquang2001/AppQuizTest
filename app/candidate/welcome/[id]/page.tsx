@@ -20,7 +20,7 @@ export default function Welcome() {
     mutationFn: candidateLogin,
     onSuccess: (data) => {
       toast.success(data.data.message);
-      router.push(`/candidate/candidate-assessment/${token}`);
+      router.push(`/candidate/candidateAssessment/${token}`);
       setCookie("access_token_candidate", data.data.data.access_token);
     },
     onError: (data: any) => {

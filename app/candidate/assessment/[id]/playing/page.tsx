@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Image from "next/image";
 import { useRouter, useParams } from "next/navigation";
@@ -12,6 +13,7 @@ import {
 import Score from "@/app/component/Score/Score";
 import NumericalChallenge from "@/app/component/ContentQuestion/NumericalChallenge/NumericalChallenge";
 import VerbalChallenge from "@/app/component/ContentQuestion/VerbalChallenge/VerbalChallenge";
+import LogicalChallenge from "@/app/component/ContentQuestion/LogicalChallenge/LogicalChallenge";
 interface Game {
   id: number;
 }
@@ -30,7 +32,10 @@ export default function Challenge() {
       key: 1,
       component: (
         <VerbalChallenge
-          expression={question?.question?.content?.question?.expression}
+          question={question}
+          stateQuest={stateQuest}
+          handleSkip={() => handleSkip()}
+          handleAnswer={(value: string) => handleAnswer(value)}
         />
       ),
     },
@@ -38,7 +43,21 @@ export default function Challenge() {
       key: 2,
       component: (
         <NumericalChallenge
-          expression={question?.question?.content?.question?.expression}
+          question={question}
+          stateQuest={stateQuest}
+          handleSkip={() => handleSkip()}
+          handleAnswer={(value: string) => handleAnswer(value)}
+        />
+      ),
+    },
+    {
+      key: 3,
+      component: (
+        <LogicalChallenge
+          question={question}
+          stateQuest={stateQuest}
+          handleSkip={() => handleSkip()}
+          handleAnswer={(value: string) => handleAnswer(value)}
         />
       ),
     },
@@ -86,7 +105,6 @@ export default function Challenge() {
   const handleSkip = () => {
     handleAnswerQuestion.mutate({
       id: question?.question?.id,
-      answer: "",
       game_id: Number(id),
       is_skip: 1,
     });
@@ -106,6 +124,7 @@ export default function Challenge() {
     if (time === 0 || question?.game_ended) {
       handleFinish.mutate(Number(id));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
   useEffect(() => {
     setTimeout(() => {
@@ -114,24 +133,7 @@ export default function Challenge() {
     }, 3000);
     setShowCountDown(true);
   }, []);
-  useEffect(() => {
-    const handleKeyPress = (event: any) => {
-      if (event.key === "ArrowUp") {
-        handleSkip();
-      } else if (event.key === "ArrowLeft") {
-        handleAnswer(question?.question?.content?.question?.result_1);
-      } else if (event.key === "ArrowRight") {
-        handleAnswer(question?.question?.content?.question?.result_2);
-      }
-    };
-    document.addEventListener("keydown", handleKeyPress);
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, [
-    question?.question?.content?.question?.result_1,
-    question?.question?.content?.question?.result_2,
-  ]);
+
   return (
     <>
       {showCountDown && !question?.game_ended && (
@@ -221,96 +223,12 @@ export default function Challenge() {
                 height={80}
               />
             </div>
-            <div className="content relative">
-              {list.map((item) => {
-                if ((item.key === Number(id))) {
-                  return item.component;
-                }
-                return null;
-              })}
-              {stateQuest !== -1 && (
-                <div className="absolute flex items-center justify-center z-10 w-full top-[0px] translate-y-[-50%]">
-                  {stateQuest === 1 && (
-                    <Image
-                      width={80}
-                      height={80}
-                      alt=""
-                      src={"/correct.svg"}
-                    ></Image>
-                  )}
-                  {stateQuest === 0 && (
-                    <Image
-                      width={80}
-                      height={80}
-                      alt=""
-                      src={"/incorrect.svg"}
-                    ></Image>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="mt-[30px]">
-              <div>
-                <p className="uppercase text-[#111315] text-[16px] leading-[24px] font-[600] text-center">
-                  skip
-                </p>
-                <button
-                  className="mx-auto flex items-center justify-center cursor-pointer"
-                  onClick={() => handleSkip()}
-                >
-                  <Image
-                    height={50}
-                    width={50}
-                    src="/skip-question.svg"
-                    alt=""
-                    className="active:scale-[0.9] transition "
-                  />
-                </button>
-              </div>
-              <div className="flex gap-[200px] justify-center">
-                <div className="flex items-center gap-[20px]">
-                  <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap">
-                    {question?.question?.content?.question?.result_1}
-                  </p>
-                  <button
-                    onClick={() =>
-                      handleAnswer(
-                        question?.question?.content?.question?.result_1
-                      )
-                    }
-                  >
-                    <Image
-                      height={50}
-                      width={50}
-                      className="active:scale-[0.9] transition "
-                      src="/back-question.svg"
-                      alt=""
-                    />
-                  </button>
-                </div>
-                <div className="flex items-center gap-[20px]">
-                  <button
-                    onClick={() =>
-                      handleAnswer(
-                        question?.question?.content?.question?.result_2
-                      )
-                    }
-                  >
-                    <Image
-                      height={50}
-                      width={50}
-                      className="active:scale-[0.9] transition "
-                      src="/next-question.svg"
-                      alt=""
-                    />
-                  </button>
-                  <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap">
-                    {question?.question?.content?.question?.result_2}
-                  </p>
-                </div>
-              </div>
-            </div>
+            {list.map((item) => {
+              if (item.key === Number(id)) {
+                return item.component;
+              }
+              return null;
+            })}
           </div>
         </div>
       )}

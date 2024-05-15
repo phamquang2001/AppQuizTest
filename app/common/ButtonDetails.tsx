@@ -7,12 +7,10 @@ interface Props {
   id?: any
 }
 function ButtonDetails(props: Props) {
-  const handleGetDetail = () => {
-    getDetailAssessment(props.id)
-  }
+ 
   return (
-    <Link href={`/hrpages/invite-assessment/${props.id}`}>
-      <button onClick={() => handleGetDetail()} className="text-sky-500 py-1 flex gap-3 items-center text-xl font-semibold">
+    <Link href={`/hrpages/inviteAssessment/${props.id}`}>
+      <button className="text-sky-500 py-1 flex gap-3 items-center text-xl font-semibold">
         Details
         <ArrowRightOutlined />
       </button>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState } from "react";
 import { Button, Dropdown, type MenuProps } from "antd";
@@ -7,17 +8,20 @@ import HeaderHr from "@/app/component/HeaderHr/HeaderHr";
 import { format, differenceInCalendarDays, parse } from "date-fns";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getDetailAssessment } from "@/app/api/apiHr";
+import DashBoard from "@/app/component/Dashboard/Dashboard";
 
 export default function InviteAssessment() {
   const [isOpenInvite, setIsOpenInvite] = useState(false);
   const idAssess = useParams();
   const [dataDetail, setDataDetail] = useState<any>({});
   const router = useRouter();
-  const {data: getDetailAssess, isLoading} = useQuery({
-    queryKey: ["getDetailAssessment"],
-    queryFn: () => getDetailAssessment(Number(idAssess.id)),
+  const getDetailAssess = useMutation({
+    mutationFn: (id: number) => getDetailAssessment(id),
+    onSuccess: (data: any) => {
+      setDataDetail(data?.data?.data?.assessment);
+    },
   });
   const formatDateRange = (
     startDateStr: string | undefined,
@@ -50,12 +54,14 @@ export default function InviteAssessment() {
       key: "1",
     },
   ];
-  useEffect(()=> {
-    setDataDetail(getDetailAssess?.data?.data?.assessment)
-  },[getDetailAssess])  
+  useEffect(() => {
+    if (idAssess.id) {
+      getDetailAssess.mutate(Number(idAssess.id));
+    }
+  }, [idAssess.id]);
   return (
     <div>
-      <HeaderHr></HeaderHr>
+      <HeaderHr />
       <div className="mt-[30px] mx-10">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-[10px]">
@@ -87,15 +93,22 @@ export default function InviteAssessment() {
               <Button
                 type="primary"
                 icon={
-                <Image height={25} width={25} alt="" src="/ic-add.svg"></Image>
-               }
+                  <Image
+                    height={25}
+                    width={25}
+                    alt=""
+                    src="/ic-add.svg"
+                  ></Image>
+                }
                 className="h-[40px] btn-create flex flex-row  items-center bg-sky-500"
               >
                 Invite participants
               </Button>
             </Dropdown>
             <Button
-              icon={<Image height={25} width={25} alt="" src="/ic-menu.svg"></Image>}
+              icon={
+                <Image height={25} width={25} alt="" src="/ic-menu.svg"></Image>
+              }
               className="border-none rounded-full btn-create flex items-center"
               style={{ width: "40px" }}
             />
@@ -103,9 +116,11 @@ export default function InviteAssessment() {
         </div>
         <div className="h-[1px] w-full bg-gradient-to-r from-[#fff] via-[#000] to-[#fff] mt-[20px]"></div>
         <IncludedTest game={dataDetail?.games} />
-        <div className="rounded-2xl border flex justify-center items-center my-8 py-8">
-          <Image height={400} width={400} alt="" src="/nodata.svg"/>
-        </div>
+        {/* <div className="rounded-2xl border flex justify-center items-center my-8 py-8">
+          <Image height={400} width={400} alt="" src="/nodata.svg" />
+          
+        </div> */}
+        <DashBoard />
         {isOpenInvite && (
           <InviteParticipantsModal
             token={dataDetail?.token}

@@ -30,3 +30,6 @@ export const getDetailAssessment = async (id: number) => {
 export const inviteCandidate = async (params: any) => {
   return await axiosInstance.post(`${urlBase}/api/v1/invite-candidate`, params);
 };
+export const getListCandidate = async (params: any) => {
+  return await axiosInstance.get(`${urlBase}/api/v1/list-candidate?type=${params.type}&option=${params.option}&assessment_id=${params.assessment_id}`);
+};

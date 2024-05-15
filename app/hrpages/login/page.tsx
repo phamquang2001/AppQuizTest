@@ -26,7 +26,7 @@ function HRLogin(props: any) {
     onSuccess: async (data) => {
       setCookie("access_token", data.data.data.access_token);
       setCookie("gmail", data.data.data.email);
-      await router.push("/hrpages/create-assessment");
+      await router.push("/hrpages/createAssessment");
       toast.success(data.data.message);
     },
     onError: (data: any) => {
@@ -107,7 +107,7 @@ function HRLogin(props: any) {
               </Form.Item>
             )}
 
-            <Link href={"/hrpages/forgot-password"}>
+            <Link href={"/hrpages/forgotPassword"}>
               <p className="text-sky-500 flex right-0 text-sm underline font-medium justify-end">
                 Forgot password?
               </p>

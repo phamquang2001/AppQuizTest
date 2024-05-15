@@ -22,7 +22,7 @@ export interface loginCandidate {
 }
 export interface answerType {
   id: number;
-  answer: string;
+  answer?: string;
   game_id: number;
   is_skip: number;
 }

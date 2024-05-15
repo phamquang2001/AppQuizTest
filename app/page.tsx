@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface Props {
   children: JSX.Element;
 }
-export default function Home({ children }: Props) {
+export default function Home() {
   return (
     <main className={""}>
       <HrPage />

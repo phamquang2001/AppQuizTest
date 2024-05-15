@@ -4,19 +4,24 @@ import ItemTest from "@/app/common/ItemTest";
 import Header from "@/app/component/Header/Header";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Props {}
 function CandidateAssessment(props: Props) {
   const getListGameCandidate = useStore((state) => state.getListGameCandidate);
   const dataListGame = useStore((state) => state.dataListGame);
-  const router = useRouter()
+  const router = useRouter();
   useEffect(() => {
     getListGameCandidate();
   }, [getListGameCandidate]);
   const handleOpen = (item: any) => {
-    router.push(`/candidate/assessment/${item.id}`)
+    if (item?.status !== 2) {
+      router.push(`/candidate/assessment/${item.id}`);
+    }else{
+      toast.success(item?.status_text)
+    }
   };
-  console.log(dataListGame)
   return (
     <div>
       <Header />
@@ -52,7 +57,7 @@ function CandidateAssessment(props: Props) {
                 <ItemTest
                   image="/itemtest.svg"
                   name={item.name}
-                  time={item.used_time}
+                  time={item.time - item.used_time}
                   point={item.score}
                   status={item.status_text}
                 ></ItemTest>
@@ -61,6 +66,7 @@ function CandidateAssessment(props: Props) {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 }

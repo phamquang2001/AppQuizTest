@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import Image from "next/image";
 import React, { useEffect } from "react";
@@ -8,11 +7,11 @@ interface Props {
   handleSkip: () => void;
   handleAnswer: (value: string) => void;
 }
-function VerbalChallenge(props: Props) {
+function LogicalChallenge(props: Props) {
   const { question, stateQuest, handleSkip, handleAnswer } = props;
   const answer = {
-    answer1: "Same",
-    answer2: "Opposite",
+    answer1: "Yes",
+    answer2: "No",
   };
   useEffect(() => {
     const handleKeyPress = (event: any) => {
@@ -28,23 +27,31 @@ function VerbalChallenge(props: Props) {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);
 
   return (
     <>
       <div className="content relative">
         <div>
-          <div className="mt-[30px] relative flex flex-col gap-3">
-            <div className="border-2  w-full p-1 max-w-[600px] mx-auto h-[70px] rounded-[32px]">
-              <p className="flex items-center justify-center text-[#111315] h-full w-full mx-auto  rounded-[32px] outline-none p-5 text-center text-[20px] font-[600] focus:text-[#111315]">
-                {question?.question?.content?.question?.word_1}
-              </p>
+          <p className="text-[16px] leading-[24px] font-[500] text-[#111315] text-center my-[15px]">
+            Does the conclusion logically follow the statements?
+          </p>
+          <div className="mt-[0px] relative flex flex-col gap-3">
+            <div className="border-2  w-full p-1 max-w-[800px] mx-auto h-[90px] rounded-[16px]">
+              <div className="flex flex-col gap-2 items-center justify-center text-[#111315] h-full w-full mx-auto outline-none p-2 text-center text-[16px] font-[600]">
+                <p>A. {question?.question?.content?.question?.statement_1}</p>
+                <p>B. {question?.question?.content?.question?.statement_2}</p>
+              </div>
               <div />
             </div>
-            <div className=" border-2  w-full p-1 max-w-[600px] mx-auto h-[70px] rounded-[32px]">
-              <p className="flex items-center justify-center text-[#111315] h-full w-full mx-auto  rounded-[32px] outline-none p-5 text-center text-[20px] font-[600] focus:text-[#111315]">
-                {question?.question?.content?.question?.word_2}
-              </p>
+            <div className=" border-2  w-full p-1 max-w-[800px] mx-auto h-[70px] rounded-[16px]">
+              <div className="flex flex-row gap-3 items-center justify-center text-[#111315] h-full w-full mx-auto outline-none p-5 text-center text-[16px] font-[600]">
+                <span className="rounded-lg bg-[#CCEBF2] font-[500] p-2">
+                  Conclusion:{" "}
+                </span>
+                <span>{question?.question?.content?.question?.conclusion}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -71,7 +78,7 @@ function VerbalChallenge(props: Props) {
           </p>
           <button
             className="mx-auto flex items-center justify-center cursor-pointer"
-            onClick={handleSkip}
+            onClick={() => handleSkip()}
           >
             <Image
               height={50}
@@ -116,4 +123,4 @@ function VerbalChallenge(props: Props) {
     </>
   );
 }
-export default VerbalChallenge;
+export default LogicalChallenge;

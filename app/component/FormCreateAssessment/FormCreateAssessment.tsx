@@ -5,6 +5,7 @@ import SelectRecruiting from "../RecruitingForm/SelectRecruiting";
 import { CreateAssessment } from "@/app/api/apiHr";
 import { DataCreateAssessment } from "@/app/utils/type";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 const { RangePicker } = DatePicker;
 
 interface Props {
@@ -20,6 +21,7 @@ const FormCreateAssessment = (props: Props) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
   const params: DataCreateAssessment = {
     name: name,
     job_function: jobFunction,
@@ -31,6 +33,14 @@ const FormCreateAssessment = (props: Props) => {
     start_date: startDate,
     end_date: endDate,
   };
+  const createAssessment = useMutation({
+    mutationFn: CreateAssessment,
+    onSuccess: async (data) => {
+      toast.info(data.data.message);
+      await queryClient.invalidateQueries({ queryKey: ["getDataArchive"] });
+      await queryClient.invalidateQueries({ queryKey: ["getDataUnArchive"] });
+    },
+  });
   const handleCreateAssessment = async () => {
     const formData = new FormData();
     formData.append("name", params.name);
@@ -42,8 +52,7 @@ const FormCreateAssessment = (props: Props) => {
     formData.append("job_position", params.job_position);
     formData.append("start_date", params.start_date);
     formData.append("end_date", params.end_date);
-    const res = await CreateAssessment(formData);
-    toast.info(res.data.message);
+    await createAssessment.mutate(formData);
   };
   const onSelectDate = (date: any) => {
     setStartDate(date[0]);
