@@ -6,7 +6,8 @@ import { getListCandidate } from "@/app/api/apiHr";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Grade from "@/app/common/Grade";
-
+import useStoreDetail from "@/app/Zustand/DetailAssessment";
+import { sliceFirstSpace } from "@/app/utils/function";
 interface DataType {
   key: React.Key;
   email: string;
@@ -21,119 +22,6 @@ interface DataType {
   note: any;
   hiring: any;
 }
-
-const columns: TableColumnsType<DataType> = [
-  {
-    title: "Email",
-    dataIndex: "email",
-  },
-  {
-    title: "Average",
-    dataIndex: "average",
-    render: (average) => (
-      <span className="rounded-lg bg-[#CCEBF2] py-2 px-3">{average}%</span>
-    ),
-    align: "center",
-  },
-  {
-    title: "Verbal",
-    dataIndex: "verbal",
-    sorter: (a, b) => a.verbal - b.verbal,
-    align: "center",
-    render: (verbal) => <span>{verbal}%</span>,
-  },
-  {
-    title: "Logical",
-    dataIndex: "logical",
-    sorter: (a, b) => a.logical - b.logical,
-    align: "center",
-    render: (logical) => <span>{logical}%</span>,
-  },
-  {
-    title: "Numerical",
-    dataIndex: "numerical",
-    sorter: (a, b) => a.numerical - b.numerical,
-    align: "center",
-    render: (numerical) => <span>{numerical}%</span>,
-  },
-  {
-    title: "Visual",
-    dataIndex: "visual",
-    sorter: (a, b) => a.visual - b.visual,
-    align: "center",
-    render: (visual) => <span>{visual}%</span>,
-  },
-  {
-    title: "Memory",
-    dataIndex: "memory",
-    sorter: (a, b) => a.memory - b.memory,
-    align: "center",
-    render: (memory) => <span>{memory}%</span>,
-  },
-  {
-    title: "Personality",
-    dataIndex: "personality",
-    render: () => (
-      <Image
-        className=" mx-auto"
-        width={48}
-        height={48}
-        alt=""
-        src={"/ic-personality.svg"}
-      ></Image>
-    ),
-    align: "center",
-  },
-  {
-    title: "Grading",
-    dataIndex: "grading",
-    sorter: (a, b) => a.grading - b.grading,
-    align: "center",
-    render: (grading) => <Grade rate={grading} />,
-  },
-  {
-    title: "Note",
-    dataIndex: "note",
-    align: "center",
-    render: () => (
-      <Image
-        className=" mx-auto"
-        width={48}
-        height={48}
-        alt=""
-        src={"/ic-note.svg"}
-      ></Image>
-    ),
-  },
-  {
-    title: "Hiring stage",
-    dataIndex: "hiring",
-    render: (hiring) => (
-      <Select
-        defaultValue="Waiting"
-        style={{ border: 0, width: "100px" }}
-        bordered={false}
-        className="ant-select-table"
-        options={[
-          {
-            value: "waiting",
-            label: "Waiting",
-          },
-          {
-            value: "applied",
-            label: "Applied",
-          },
-          {
-            value: "refused",
-            label: "Refused",
-          },
-        ]}
-      />
-    ),
-    align: "center",
-  },
-];
-
 const onChange: TableProps<DataType>["onChange"] = (
   pagination,
   filters,
@@ -146,6 +34,82 @@ const onChange: TableProps<DataType>["onChange"] = (
 const TableDashBoard = () => {
   const [listCandidate, setListCandidate] = useState<any>();
   const id = useParams().id;
+  const dataListGame = useStoreDetail((state)=> state.data)
+  const columnsGame = dataListGame?.games ? dataListGame?.games?.map((e: any) => {
+    const newName = sliceFirstSpace(e?.name);
+    return {
+      title: newName,
+      dataIndex: newName,
+      sorter: (a: any, b: any) => a[newName] - b[newName],
+      align: "center",
+      render: (verbal: number) => <span>{verbal}%</span>,
+    };
+  }) : [];
+  const columns: TableColumnsType<DataType> = [
+    {
+      title: "Email",
+      dataIndex: "email",
+    },
+    {
+      title: "Average",
+      dataIndex: "average",
+      render: (average) => (
+        <span className="rounded-lg bg-[#CCEBF2] py-2 px-3">{average}%</span>
+      ),
+      align: "center",
+    }
+    ,
+    ...columnsGame
+    ,
+    {
+      title: "Grading",
+      dataIndex: "grading",
+      sorter: (a, b) => a.grading - b.grading,
+      align: "center",
+      render: (grading) => <Grade rate={grading} />,
+    },
+    {
+      title: "Note",
+      dataIndex: "note",
+      align: "center",
+      render: () => (
+        <Image
+          className=" mx-auto"
+          width={48}
+          height={48}
+          alt=""
+          src={"/ic-note.svg"}
+        ></Image>
+      ),
+    },
+    {
+      title: "Hiring stage",
+      dataIndex: "hiring",
+      render: () => (
+        <Select
+          defaultValue="Waiting"
+          style={{ border: 0, width: "100px" }}
+          bordered={false}
+          className="ant-select-table"
+          options={[
+            {
+              value: "waiting",
+              label: "Waiting",
+            },
+            {
+              value: "applied",
+              label: "Applied",
+            },
+            {
+              value: "refused",
+              label: "Refused",
+            },
+          ]}
+        />
+      ),
+      align: "center",
+    },
+  ]
   const { data: getDataCandidate, refetch } = useQuery({
     queryKey: ["listCandidate"],
     queryFn: () =>
@@ -165,13 +129,13 @@ const TableDashBoard = () => {
         item?.rank_numerical_game +
         item?.rank_visual_game +
         item?.rank_memory_game) /
-      5,
-    verbal: item?.rank_verbal_game,
-    logical: item?.rank_logical_game,
-    numerical: item?.rank_numerical_game,
-    visual: item?.rank_visual_game,
-    memory: item?.rank_memory_game,
-    personality: "",
+        dataListGame?.games?.length ,
+    Verbal: item?.rank_verbal_game,
+    Logical: item?.rank_logical_game,
+    Numerical: item?.rank_numerical_game,
+    Visual: item?.rank_visual_game,
+    Memory: item?.rank_memory_game,
+    Personality: "",
     grading: 1,
     note: "Good candidate",
     hiring: "",
