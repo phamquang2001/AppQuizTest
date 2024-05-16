@@ -18,10 +18,10 @@ export default function Welcome() {
   const [email, setEmail] = useState("");
   const logIn = useMutation({
     mutationFn: candidateLogin,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await toast.success(data.data.message);
       router.push(`/candidate/candidateAssessment/${token}`);
       setCookie("access_token_candidate", data.data.data.access_token);
-      toast.success(data.data.message);
     },
     onError: (data: any) => {
       console.log(data);
