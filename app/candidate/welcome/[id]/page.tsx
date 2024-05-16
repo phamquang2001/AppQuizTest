@@ -35,9 +35,9 @@ export default function Welcome() {
     <div>
       <Header />
       <div className="flex flex-col items-center justify-center ">
-        <Image height={450} width={450} src="/logoShoppe.svg" alt="" />
-        <div className="w-[500px] flex flex-col items-center gap-3">
-          <h1 className="font-semibold text-2xl leading-[56px]">
+        <Image className="mobile:h-[300px] mobile:w-[300px]" height={450} width={450} src="/logoShoppe.svg" alt="" />
+        <div className="mobile:w-[300px] w-[500px] flex flex-col items-center gap-3">
+          <h1 className="font-semibold text-2xl leading-[56px] mobile:text-lg">
             Welcome to Shopee assessment
           </h1>
           <p className="text-sm">Thanks for your interest in this position!</p>
@@ -45,7 +45,7 @@ export default function Welcome() {
             Please enter your email adress to access the assessment.
           </p>
           <Input
-            className="w-[430px] p-[10px] my-2"
+            className="mobile:w-[300px] w-[430px] p-[10px] my-2"
             type="email"
             placeholder="example@gmail.com"
             onChange={(e) => setEmail(e.target.value)}
@@ -56,7 +56,7 @@ export default function Welcome() {
             }}
           ></Input>
           <Button
-            className="w-[430px] bg-[#009DBE] py-2 flex items-center justify-center h-10"
+            className="mobile:w-[300px] w-[430px] bg-[#009DBE] py-2 flex items-center justify-center h-10"
             type="primary"
             onClick={() => handleLogin()}
           >

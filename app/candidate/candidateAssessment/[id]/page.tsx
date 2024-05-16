@@ -25,16 +25,16 @@ function CandidateAssessment(props: Props) {
   return (
     <div>
       <Header />
-      <div className=" py-8 px-28 flex flex-col gap-6">
+      <div className=" py-8 px-28 flex flex-col gap-6 mobile:py-3 mobile:px-3">
         <div className="flex flex-col gap-2">
           <h2 className="font-semibold text-xl">Welcome to our assessment</h2>
-          <p>
+          <p className="mobile:text-sm">
             These are not traditional assessment tests but fun & engaging
             gamified challenges for you to discover yourself and explore if you
             are the most SUITABLE for the applying position.
           </p>
-          <p>Are you up for the challenge?</p>
-          <ul className="flex flex-col gap-1 pl-8 list-disc">
+          <p className="mobile:text-sm">Are you up for the challenge?</p>
+          <ul className="flex flex-col gap-1 pl-8 list-disc mobile:text-sm">
             <li>
               This assessment includes [6] tests, which will take approximately
               [20 minutes] to accomplish.
@@ -47,11 +47,11 @@ function CandidateAssessment(props: Props) {
             </li>
             <li>Do not refresh the page or close the window while playing.</li>
           </ul>
-          <p>Have fun and good luck.</p>
+          <p className="mobile:text-sm">Have fun and good luck.</p>
         </div>
         <div className="flex flex-col gap-3">
-          <h1 className="font-semibold text-3xl">Choose a test</h1>
-          <div className="flex flex-wrap gap-6">
+          <h1 className="font-semibold text-3xl mobile:text-base">Choose a test</h1>
+          <div className="flex flex-wrap gap-6 mb-3">
             {dataListGame?.map((item: any) => (
               <button key={item.id} onClick={() => handleOpen(item)}>
                 <ItemTest

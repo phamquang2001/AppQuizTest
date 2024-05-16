@@ -8,9 +8,9 @@ import './style.scss'
 function HrPage() {
   return (
     <div>
-      <div className="Header-HR">
+      <div className="Header-HR ">
         <Logo></Logo>
-        <div className="flex gap-5 mr-10">
+        <div className="flex gap-5 mr-10" >
           <button className="btn-test">Test library</button>
           <Link href={'/hrpages/login'}><button className="btn-login">Log in</button></Link>
         </div>

@@ -82,22 +82,22 @@ function VerbalChallenge(props: Props) {
             />
           </button>
         </div>
-        <div className="flex gap-[200px] justify-center">
-          <div className="flex items-center gap-[20px]">
-            <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap">
+        <div className="flex gap-[200px] justify-center mobile:justify-between mobile:gap-0	">
+          <div className="flex items-center gap-[20px] mobile:flex-col mobile:w-[150px]">
+            <p className="text-[#111315] text-[20px] leading-[44px] font-[600] whitespace-nowrap mobile:order-2">
               {answer.answer1}
             </p>
             <button onClick={() => handleAnswer(answer.answer1)}>
               <Image
                 height={50}
                 width={50}
-                className="active:scale-[0.9] transition "
+                className="active:scale-[0.9] transition mobile:order-1"
                 src="/back-question.svg"
                 alt=""
               />
             </button>
           </div>
-          <div className="flex items-center gap-[20px]">
+          <div className="flex items-center gap-[20px] mobile:flex-col mobile:w-[150px]">
             <button onClick={() => handleAnswer(answer.answer2)}>
               <Image
                 height={50}

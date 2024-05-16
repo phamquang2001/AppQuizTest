@@ -21,8 +21,8 @@ function ItemTest(props: Props) {
   };
   const statusText = getStatusText(status) as { text: string; color: string };
   return (
-    <div className="rounded-2xl border w-[200px] p-3 flex flex-col gap-2">
-      <Image height={160} width={166} src={image} alt="" />
+    <div className="rounded-2xl border w-[200px] p-3 flex flex-col gap-2 mobile:w-[350px] ">
+      <Image className="mobile:w-full" height={160} width={166} src={image} alt="" />
       <h1 className="font-semibold text-base">{name}</h1>
       <div className="flex justify-between">
         <div className="flex gap-1">

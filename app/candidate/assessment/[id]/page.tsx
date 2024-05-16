@@ -25,7 +25,7 @@ function page(props: Props) {
   }, [getListGameCandidate]);
   return (
     <div>
-      <div className="py-10 px-20 flex items-center gap-3 font-semibold">
+      <div className="py-10 px-20 flex items-center gap-3 font-semibold mobile:px-3 mobile:py-3">
         <button onClick={() => router.back()}>
           <Image
             className=""
@@ -69,7 +69,7 @@ function page(props: Props) {
             </ul>
 
             <Button
-              className="w-[430px] bg-[#009DBE] py-2 flex items-center justify-center h-10"
+              className="w-[430px] bg-[#009DBE] py-2 flex items-center justify-center h-10 mobile:w-[350px]"
               type="primary"
               onClick={() => handleStart()}
             >

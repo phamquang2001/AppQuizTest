@@ -8,7 +8,7 @@ function Logo(props: any) {
       width={500}
       height={500}
       alt="Picture of the author"
-      className="w-48 h-24 mt-2 ml-10"
+      className="w-48 h-24 mt-2 ml-10 mobile:w-24 mobile:h-12"
     />
   );
 }

@@ -28,6 +28,10 @@ const config: Config = {
         '100': "576px",
       },
     },
+    screens: {
+      'mobile' : {'max': '480px'},
+      'tablet': {'max': '1024px'},
+    },
   },
   plugins: [],
 };

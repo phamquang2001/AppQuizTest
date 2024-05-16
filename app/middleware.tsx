@@ -5,7 +5,7 @@ import { getListAssessment } from "./api/apiHr";
 
 export async function middleware(request: NextRequest) {
   console.log("a")
-  const tokenIsValid = await validateToken(); // Hàm validateToken sẽ kiểm tra token có hợp lệ hay không
+  const tokenIsValid = await validateToken(); 
   if (tokenIsValid) {
     return NextResponse.next();
   } else {

@@ -150,7 +150,7 @@ export default function Challenge() {
       {!showCountDown && !question?.game_ended && !dataFinish && (
         <div autoFocus className="relative p-8">
           <div className="absolute top-0 z-[-1] left-0">
-            <Image src="/Game Background.png" alt="" width={800} height={500} />
+            <Image  src="/Game Background.png" alt="" width={800} height={500} />
           </div>
           <div className="absolute top-0 z-[-1] right-0">
             <Image
@@ -168,11 +168,11 @@ export default function Challenge() {
             className="h-[40px] w-[40px] active:scale-[0.85] transition-all"
             onClick={() => router.back()}
           />
-          <div className="font-medium bg-white px-12 py-6 border-[1px] border-[#009DBE] rounded-[16px] w-full max-w-[1000px] mx-auto">
+          <div className="font-medium bg-white px-12 py-6 border-[1px] border-[#009DBE] rounded-[16px] w-full max-w-[1000px] mx-auto mobile:px-3 mobile:py-2">
             <div className="flex items-center justify-between">
               <div className="flex gap-[10px]">
                 <div className="w-[12px] rounded-[40px] bg-[#009DBE]"></div>
-                <h4 className="text-[#111315] text-[24px] font-[600] leading-[24px]">
+                <h4 className="text-[#111315] text-[24px] font-[600] leading-[24px] mobile:text-[12px]">
                   {filteredData[0]?.name}
                 </h4>
               </div>
@@ -216,7 +216,7 @@ export default function Challenge() {
             <div className="mt-[20px] h-[1px] w-full bg-gradient-to-r from-[#ffff] via-[#99D8E5] to-[#ffff]"></div>
             <div className="mt-[30px]">
               <Image
-                className=" mx-auto max-w-[500px]"
+                className=" mx-auto max-w-[500px] mobile:w-[300px]"
                 src="/game-avt.svg"
                 alt=""
                 width={400}
