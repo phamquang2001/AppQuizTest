@@ -84,7 +84,14 @@ const FormCreateAssessment = (props: Props) => {
       <Form.Item
         label="Select tests"
         name="SelectTests"
-        // rules={[{ required: true, message: "Please input!" }]}
+        rules={[{validator: (_, value) => {
+          if (gameId.length > 0) {
+            console.log(value)
+            return Promise.resolve();
+          } else {
+            return Promise.reject('Some message here');
+          }
+         }, message: "Please input!" }]}
       >
         <SelectTest
           setGameId={(value: number[]) => {
