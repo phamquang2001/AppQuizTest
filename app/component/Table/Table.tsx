@@ -124,12 +124,12 @@ const TableDashBoard = () => {
     key: index,
     email: item.email,
     average:
-      (item?.rank_verbal_game +
+      ((item?.rank_verbal_game +
         item?.rank_logical_game +
         item?.rank_numerical_game +
         item?.rank_visual_game +
         item?.rank_memory_game) /
-        dataListGame?.games?.length ,
+        dataListGame?.games?.length).toFixed(2) ,
     Verbal: item?.rank_verbal_game,
     Logical: item?.rank_logical_game,
     Numerical: item?.rank_numerical_game,
