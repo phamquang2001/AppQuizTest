@@ -183,10 +183,10 @@ const SelectTest = (props: Props) => {
                     selectedValue === "Vietnamese"
                   ) {
                     setLanguage(selectedValue);
-                    setRadioChecked(true); // Đặt biến state để chỉ ra rằng radio đã được chọn
+                    setRadioChecked(true); 
                   } else {
                     setLanguage("");
-                    setRadioChecked(false); // Đặt biến state để chỉ ra rằng radio chưa được chọn
+                    setRadioChecked(false); 
                   }
                 }}
                 name="personalityTest"

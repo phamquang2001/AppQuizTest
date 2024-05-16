@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Flex } from "antd";
 
 interface BtnLoginProps {
-  type?: "primary" | "default" | "dashed" | "text" | "link"; // Định nghĩa kiểu cho prop type
+  type?: "primary" | "default" | "dashed" | "text" | "link"; 
   text: string;
   className?: string
   onClick?: () => void;
